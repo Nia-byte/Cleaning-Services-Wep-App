@@ -46,7 +46,7 @@
                                     <p>Home cleaning services</p>
                                 </div>
                             </div>
-                            <div class="service-price">from R600</div>
+                           
                         </div>
                         
                         <div class="service-option" data-service="green" >
@@ -57,7 +57,7 @@
                                  <p>Eco-friendly products</p>
                                 </div>
                             </div>
-                            <div class="service-price">from R1000</div>
+                            
                         </div>
                         <div class="service-option" data-service="post-construction" >
                             <div class="service-left">
@@ -67,7 +67,7 @@
                                     <p>After construction cleanup</p>
                                 </div> 
                             </div>
-                            <div class="service-price">from R1500</div>
+                           
                         </div>
 
                         <div class="service-option" data-service="office" >
@@ -78,7 +78,7 @@
                                     <p>Professional office cleaning</p>
                                 </div>
                             </div>
-                            <div class="service-price">from R3500</div>
+                            
                         </div>
                        
                     </div>
@@ -87,14 +87,15 @@
                 <!-- Tab 2: Service Options -->
                
                    <!-- Tab 2: Options -->
+
         <div class="tab-content" id="options">
             <!-- Residential Options -->
             <div class="service-options" id="residential-options">
+                  <h3 class="section-title">Our services include the living/dining room and kitchen.</h3>
                 <div class="note">
                     Every house is different. Our quote will be based on your exact needs, the size and condition of your home. You can request a free virtual or in-person assessment.
                 </div>
                 
-                <h3>Our services include the living/dining room and kitchen.</h3>
                 
                 <div class="radio-group">
                     <label class="radio-item">
@@ -110,43 +111,47 @@
                 <div class="tip">💡 10–15% discount for recurring clients</div>
                 
                 <h3>Type of cleaning:</h3>
-                
+                 <div class="service-grid">
                 <div class="service-card cleaning-type" data-cleaning="standard">
-                    <div class="service-info">
-                        <div class="service-details">
+                    <div class="service-option">
+                        <div class="service-info">
                             <h3>Standard Cleaning</h3>
                             <p>Regular maintenance cleaning</p>
+                            
                         </div>
+                        <div class="service-price">from R600</div>
                     </div>
-                    <div class="service-price">from R600 (2-bedroom)</div>
+                    
                 </div>
 
                 <div class="service-card cleaning-type" data-cleaning="deep">
-                    <div class="service-info">
-                        <div class="service-details">
+                    <div class="service-option">
+                        <div class="service-info">
                             <h3>Deep Cleaning</h3>
                             <p>Comprehensive detailed cleaning</p>
                         </div>
+                         <div class="service-price">from R950</div>
                     </div>
-                    <div class="service-price">from R950</div>
+                   
                 </div>
 
                 <div class="service-card cleaning-type" data-cleaning="move">
-                    <div class="service-info">
-                        <div class="service-details">
+                    <div class="service-option">
+                        <div class="service-info">
                             <h3>Move-In / Move-Out</h3>
                             <p>Thorough moving cleaning - Includes windows, garages, etc.</p>
                         </div>
+                        <div class="service-price">from R1400</div>
                     </div>
-                    <div class="service-price">from R1400</div>
+                    
                 </div>
-
+</div>
                 <div class="combo-group">
                     <div class="form-group">
                         <label for="beds">Beds</label>
                         <select id="beds">
-                            <option value="1">1 Bedroom</option>
-                            <option value="2" selected>2 Bedrooms</option>
+                            <option value="1" selected>1 Bedroom</option>
+                            <option value="2">2 Bedrooms</option>
                             <option value="3">3 Bedrooms</option>
                             <option value="4">4 Bedrooms</option>
                         </select>
@@ -178,6 +183,8 @@
                         </label>
                     </div>
                 </div>
+
+       
             </div>
 
             <!-- Green Cleaning Options -->
@@ -205,8 +212,8 @@
                     <div class="form-group">
                         <label for="green-beds">Beds</label>
                         <select id="green-beds">
-                            <option value="1">1 Bedroom</option>
-                            <option value="2" selected>2 Bedrooms</option>
+                            <option value="1" selected>1 Bedroom</option>
+                            <option value="2">2 Bedrooms</option>
                             <option value="3">3 Bedrooms</option>
                             <option value="4">4 Bedrooms</option>
                         </select>
@@ -243,34 +250,24 @@
             <!-- Post Construction Options -->
             <div class="service-options hidden" id="post-construction-options">
                 <h3>Our services include the living room and kitchen.</h3>
-                
-                <div class="radio-group">
-                    <label class="radio-item">
-                        <input type="radio" name="construction-frequency" value="once-off" checked>
-                        Once-Off
-                    </label>
-                    <label class="radio-item">
-                        <input type="radio" name="construction-frequency" value="recurring">
-                        Recurring
-                    </label>
-                </div>
+        
                 
                 <div class="tip">💡 10–15% discount for recurring clients</div>
                 
                 <h3>Project Size:</h3>
-                
+                 <div class="service-grid">
                 <div class="service-card construction-type" data-construction="square-meter">
-                    <div class="service-info">
-                        <div class="service-details">
+                     <div class="service-option">
+                        <div class="service-info">
                             <h3>By Square Meter</h3>
-                            <p>Priced per square meter</p>
+                            <p>R25-R50 per square meter</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="service-card construction-type" data-construction="small">
-                    <div class="service-info">
-                        <div class="service-details">
+                    <div class="service-option">
+                        <div class="service-info">
                             <h3>Small Job</h3>
                             <p>Small construction cleanup</p>
                         </div>
@@ -278,8 +275,8 @@
                 </div>
 
                 <div class="service-card construction-type" data-construction="medium">
-                    <div class="service-info">
-                        <div class="service-details">
+                    <div class="service-option">
+                        <div class="service-info">
                             <h3>Medium Job</h3>
                             <p>Medium construction cleanup</p>
                         </div>
@@ -287,13 +284,37 @@
                 </div>
 
                 <div class="service-card construction-type" data-construction="large">
-                    <div class="service-info">
-                        <div class="service-details">
+                    <div class="service-option">
+                        <div class="service-info">
                             <h3>Large Project</h3>
                             <p>Large construction cleanup</p>
                         </div>
                     </div>
                 </div>
+             </div>
+
+
+<!-- modal -->
+<div id="square-meter-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Enter Square Meters</h2>
+        <p>Please enter the total square meters for your construction cleanup project.</p>
+        <div class="input-group">
+            <label for="square-meter-input">Square Meters:</label>
+            <input type="number" id="square-meter-input" placeholder="Enter square meters" min="1" step="0.1">
+        </div>
+        <div class="modal-buttons">
+            <button id="cancel-modal" class="btn-secondary">Cancel</button>
+            <button id="confirm-square-meters" class="btn-primary">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add this element where you want the price message to appear (near your price display) -->
+<div id="price-message" class="price-message" style="display: none;"></div>
+
+
             </div>
 
             <!-- Office Options -->
@@ -312,10 +333,10 @@
                 <div class="tip">💡 10–15% discount for recurring clients</div>
                 
                 <h3>Office Size:</h3>
-                
+              <div class="service-grid">
                 <div class="service-card office-type" data-office="small">
-                    <div class="service-info">
-                        <div class="service-details">
+                    <div class="service-option">
+                        <div class="service-info">
                             <h3>Small Office</h3>
                             <p>up to 100m²</p>
                         </div>
@@ -323,8 +344,8 @@
                 </div>
 
                 <div class="service-card office-type" data-office="medium">
-                    <div class="service-info">
-                        <div class="service-details">
+                    <div class="service-option">
+                        <div class="service-info">
                             <h3>Medium Office</h3>
                             <p>100–250m²</p>
                         </div>
@@ -332,57 +353,22 @@
                 </div>
 
                 <div class="service-card office-type" data-office="large">
-                    <div class="service-info">
-                        <div class="service-details">
+                    <div class="service-option">
+                        <div class="service-info">
                             <h3>Large Office</h3>
                             <p>250m²+</p>
                         </div>
                     </div>
                 </div>
+             </div>
+
+             
             </div>
         </div>
 
-                <!-- Tab 3: Add-ons -->
-                <div class="tab-content" id="tab-3">
-                    <h2 class="section-title">Add extras to your booking</h2>
-                    <div class="service-grid">
-                        <div class="addon-item">
-                            <div class="addon-left">
-                                <div class="checkbox" data-addon="windows" data-price="50"></div>
-                                <div class="service-icon">🪟</div>
-                                <div class="service-info">
-                                    <h3>Window Cleaning</h3>
-                                    <p>Interior and exterior windows</p>
-                                </div>
-                            </div>
-                            <div class="service-price">+R50</div>
-                        </div>
-                        <div class="addon-item">
-                            <div class="addon-left">
-                                <div class="checkbox" data-addon="carpet" data-price="100"></div>
-                                <div class="service-icon">🧼</div>
-                                <div class="service-info">
-                                    <h3>Carpet Cleaning</h3>
-                                    <p>Deep carpet and rug cleaning</p>
-                                </div>
-                            </div>
-                            <div class="service-price">+R100</div>
-                        </div>
-                        <div class="addon-item">
-                            <div class="addon-left">
-                                <div class="checkbox" data-addon="appliances" data-price="75"></div>
-                                <div class="service-icon">🔥</div>
-                                <div class="service-info">
-                                    <h3>Fridge/Oven Cleaning</h3>
-                                    <p>Deep appliance cleaning</p>
-                                </div>
-                            </div>
-                            <div class="service-price">+R75</div>
-                        </div>
-                    </div>
-                </div>
+              
 
-                <!-- Tab 4: Booking Details -->
+                <!-- Tab 3: Booking Details -->
                 <div class="tab-content" id="tab-4">
                     <h2 class="section-title">Tell us about you</h2>
                     <div class="form-group">
@@ -429,11 +415,12 @@
                 </div>
             </div>
 
-             <!-- Continue Button -->
-            <div class="bottom-section">
-              
-                <button class="next-button" id="continue-btn" >Continue to Next Step</button>
-            </div>
+           <div class="bottom-section">
+  <div class="bottom-content">
+    <div class="price-text" id="total-price">R0 ZAR</div>
+    <button class="next-button" id="continue-btn">Continue to Next Step</button>
+  </div>
+</div>
 
         </div>
     </div>

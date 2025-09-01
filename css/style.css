@@ -16,6 +16,8 @@
             --white: #FFFFFF;
             --text-dark: #333333;
             --text-light: #666666;
+            --another-blue: #4484f4;
+            --background: #fcfcfc;
 
                         /* Additional shades for better design */
             --blue-hover: #3367D6;
@@ -524,7 +526,7 @@ body {
     max-width: 1400px;
     margin: 0 auto;
     width: 100%;
-    margin-top: 0 !important;
+    margin-top: -80px !important;
     padding: 80px 60px;
     justify-content: center;
    
@@ -568,15 +570,17 @@ body {
     justify-content: center;
     align-items: center;
      margin-bottom: 0; 
-      max-height: 400px;
+      max-height: none;
   overflow: hidden;
-  
+  border-color: none;
+  right: -80px !important;
 }
 
 .hero-image {
-   width: 100%;
+    top : -0px;
+   width: none;
     height: auto;
-    max-height: 500px; /* ✅ Try 400–600px based on what looks best */
+    max-height: none; /* ✅ Try 400–600px based on what looks best */
     object-fit: contain; /* or "contain" if you want full visibility */
 }
 
@@ -637,6 +641,7 @@ body {
         justify-content: center;
         align-items: center;
         margin-bottom: 1rem;
+        right: 0 !important; /* Reset right position */
     }
     
     /* Make text content appear second */
@@ -648,10 +653,12 @@ body {
     
     /* Reduce logo size on mobile */
     .hero-image {
-        max-width: 200px;
-        width: 200px;
-        height: auto;
+      top: 80px;
+        
         object-fit: contain;
+          width: 100%;
+    height: auto;
+    max-height: 500px;
     }
     
     .section-label {
@@ -1232,6 +1239,13 @@ body {
 .success-message.show {
     opacity: 1;
     transform: translateY(0);
+}
+/* Add this to make your footer wider */
+.footer-container {
+    max-width: 1400px !important; /* Makes it wider than typical 1200px */
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 /*PRE-FOOTER*/
@@ -1817,7 +1831,8 @@ body {
     cursor: pointer;
     overflow: hidden;
     position: relative;
-    min-height: 400px;
+    min-height: 500px;
+    width: 500px !important;
     display: flex;
     flex-direction: column;
 }
@@ -1825,22 +1840,22 @@ body {
 /* Service background images */
 .service-category:nth-child(1) {
     background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), 
-                url('/images/roommates-cleaning-home-together.jpg') center/cover;
+                url('/images/residential-cleaning.jpg') center/cover;
 }
 
 .service-category:nth-child(2) {
     background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), 
-                url('/images/full-shot-people-wearing-hazmat-suits.jpg') center/cover;
+                url('/images/commercial-cleaning.jpg') center/cover;
 }
 
 .service-category:nth-child(3) {
     background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), 
-                url('/images/construction-worker-carrying-placard.jpg') center/cover;
+                url('/images/eco-cleaning.jpg') center/cover;
 }
 
 .service-category:nth-child(4) {
     background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), 
-                url('/images/unrecognizable-person-white-chemical-protection-suit-with-reservoir-disinfecting-public-corridor-stop-spreading-highly-contagious-corona-virus.jpg') center/cover;
+                url('/images/specialized-cleaning.jpg') center/cover;
 }
         .service-category:hover {
             transform: scale(1.05);
@@ -3135,7 +3150,7 @@ body {
       /* Testimonials Section */
         .testimonials {
             padding: 80px 20px;
-            background: var(--light-gray);
+            background: var(--white);
         }
 
         .testimonials-container {
@@ -3255,8 +3270,8 @@ body {
         }
 
         .stars {
-            color: #FFD700;
-            font-size: 1.2rem;
+            color: var(--another-blue) !important;
+            font-size: 1.8rem;
             margin-bottom: 15px;
         }
 
@@ -3292,9 +3307,7 @@ body {
             transition: color 0.3s ease;
         }
 
-        .testimonial-card:hover .read-more-btn {
-            color: var(--white);
-        }
+       
 
         .read-more-btn::after {
             content: ' →';
@@ -3390,21 +3403,13 @@ body {
 
 /*BECOME A MEMBER*/
  .pro-section {
-            background: linear-gradient(135deg, var(--white) 0%, var(--light-gray) 100%);
+            background: var(--another-blue);
             padding: var(--section-padding) 0;
             position: relative;
             overflow: hidden;
         }
 
-        .pro-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
-        }
+       
 
         .container2 {
             max-width: 1200px;
@@ -3427,14 +3432,14 @@ body {
         .main-heading2 {
             font-size: clamp(2rem, 4vw, 3rem);
             font-weight: 700;
-            color: var(--text-dark);
+            color: var(--white);
             margin-bottom: 1.5rem;
             line-height: 1.2;
         }
 
         .description2 {
             font-size: 1.125rem;
-            color: var(--text-light);
+            color: var(--white);
             margin-bottom: 2rem;
             line-height: 1.7;
             max-width: 500px;
@@ -3451,7 +3456,7 @@ body {
             font-size: 1.1rem;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
-            border: none;
+            border: 2px solid white;
             cursor: pointer;
         }
 
@@ -3541,7 +3546,7 @@ body {
 
         /*PRE FOOTER*/
         .cta-section {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-green) 100%);
+            background: #cccccc;
             padding: 120px 20px;
             text-align: center;
             position: relative;
@@ -3551,6 +3556,7 @@ body {
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            border-radius: 15px !important;
         }
 
         /* Decorative dots */

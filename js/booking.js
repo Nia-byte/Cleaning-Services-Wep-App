@@ -1,441 +1,696 @@
 //PART 2
-    // State management
-        let currentTab2 = 0;
-        let selectedService2 = '';
-        let selectedOptions = {
-            cleaningType: '',
-            beds: 2,
-            baths: 1,
-            frequency: 'once-off',
-            recurringFrequency: '',
-            officeSize: '',
-            constructionType: '',
-            addons: []
-        };
+// State management
+let currentTab2 = 0;
+let selectedService2 = '';
+let selectedOptions = {
+    cleaningType: '',
+    beds: 1, // Changed from 2 to 1 to match default
+    baths: 1,
+    frequency: 'once-off',
+    recurringFrequency: '',
+    officeSize: '',
+    constructionType: '',
+    squareMeters: 0 // Add square meters for by-meter pricing
+};
 
-        // Pricing logic
-        const pricing = {
-            residential: {
-                standard: { base: 300, perRoom: 300 },
-                deep: { base: 475, perRoom: 475 },
-                move: { base: 1400, perRoom: 80 }
-            },
-            green: {
-                2: 1000,
-                3: 1500,
-                4: 2200
-            },
-            recurring: {
-                1: { weekly: 400, biweekly: 500, monthly: 600 },
-                2: { weekly: 600, biweekly: 800, monthly: 900 },
-                3: { weekly: 1000, biweekly: 1200, monthly: 1500 },
-                4: { weekly: 1500, biweekly: 1800, monthly: 2200 }
-            },
-            addons: {
-                window: 100,
-                carpet: 250,
-                appliance: 100,
-                garage: 100
+// Track which tabs are accessible
+let accessibleTabs = [true, false, false, false]; // Only first tab is accessible initially
+
+// Pricing logic
+const pricing = {
+    residential: {
+        standard: { perRoom: 300 },
+        deep: { perRoom: 475 },
+        move: { base: 1400, perRoom: 80 }
+    },
+    green: {
+        1: 700, // Added price for 1 bedroom
+        2: 1000,
+        3: 1500,
+        4: 2200
+    },
+    recurring: {
+        1: { weekly: 400, biweekly: 500, monthly: 600 },
+        2: { weekly: 600, biweekly: 800, monthly: 900 },
+        3: { weekly: 1000, biweekly: 1200, monthly: 1500 },
+        4: { weekly: 1500, biweekly: 1800, monthly: 2200 }
+    },
+    construction: {
+        small: 1500,
+        medium: 3000,
+        large: 6000,
+        perSquareMeter: { min: 25, max: 50 } // R25-R50 per square meter
+    },
+    office: {
+    onceOff: {
+        small: 1200,   // Custom once-off price
+        medium: 1800,
+        large: 2500
+    },
+    recurring: {
+        small: 3500,   // Monthly
+        medium: 4500,
+        large: 6000  // This can be a placeholder. We'll show "Quote on request" if needed.
+    }
+   }
+};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    initializeTabs();
+    initializeServiceSelection();
+    initializeOptions();
+    initializeAddons();
+    initializeContinueButton();
+    initializeModal();
+    updateTabAccessibility(); // Initialize tab accessibility
+    updatePrice();
+});
+
+function initializeTabs() {
+    const tabItems = document.querySelectorAll('.tab-item');
+    tabItems.forEach((tab, index) => {
+        tab.addEventListener('click', (e) => {
+            // Prevent navigation if tab is not accessible
+            if (!accessibleTabs[index]) {
+                e.preventDefault();
+                return;
             }
-        };
+            
+            // Only allow going back to previous tabs or staying on current tab
+            if (index <= currentTab2) {
+                switchTab(index);
+            }
+        });
+    });
+}
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeTabs();
-            initializeServiceSelection();
-            initializeOptions();
-            initializeAddons();
+// Update tab accessibility and visual state
+function updateTabAccessibility() {
+    const tabItems = document.querySelectorAll('.tab-item');
+    
+    tabItems.forEach((tab, index) => {
+        if (accessibleTabs[index]) {
+            tab.classList.remove('disabled');
+            tab.style.cursor = 'pointer';
+            tab.style.opacity = '1';
+        } else {
+            tab.classList.add('disabled');
+            tab.style.cursor = 'not-allowed';
+            tab.style.opacity = '0.5';
+        }
+    });
+}
+
+// Check if current tab requirements are met
+function isCurrentTabComplete() {
+    switch (currentTab2) {
+        case 0: // Service selection tab
+            return selectedService2 !== '';
+            
+        case 1: // Options tab
+            if (selectedService2 === 'residential') {
+                return selectedOptions.cleaningType !== '';
+            } else if (selectedService2 === 'office') {
+                return selectedOptions.officeSize !== '';
+            } else if (selectedService2 === 'post-construction') {
+                return selectedOptions.constructionType !== '';
+            } else if (selectedService2 === 'green') {
+                return true; // Green cleaning doesn't need additional selection beyond beds/baths
+            }
+            return false;
+            
+        case 2: // Add-ons tab
+            return true; // Add-ons are optional
+            
+        case 3: // Details tab
+            const fullName = document.getElementById('full-name')?.value || '';
+            const email = document.getElementById('email')?.value || '';
+            const phone = document.getElementById('phone')?.value || '';
+            const preferredDate = document.getElementById('preferred-booking-date')?.value || '';
+            const preferredTime = document.getElementById('preferred-time')?.value || '';
+            const address = document.getElementById('address')?.value || '';
+            
+            return fullName && email && phone && preferredDate && preferredTime && address;
+            
+        default:
+            return false;
+    }
+}
+
+// Update which tabs are accessible based on completion
+function updateAccessibleTabs() {
+    // Always allow access to current and previous tabs
+    for (let i = 0; i <= currentTab2; i++) {
+        accessibleTabs[i] = true;
+    }
+    
+    // Allow access to next tab only if current tab is complete
+    if (isCurrentTabComplete() && currentTab2 < 3) {
+        accessibleTabs[currentTab2 + 1] = true;
+    }
+    
+    updateTabAccessibility();
+}
+
+function initializeContinueButton() {
+    const continueBtn = document.getElementById('continue-btn');
+    if (continueBtn) {
+        continueBtn.addEventListener('click', nextTab);
+    }
+}
+
+// Add modal initialization
+function initializeModal() {
+    // Modal close functionality
+    const modal = document.getElementById('square-meter-modal');
+    const closeBtn = document.querySelector('.close-modal');
+    const cancelBtn = document.getElementById('cancel-modal');
+    const confirmBtn = document.getElementById('confirm-square-meters');
+    
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeModal);
+    }
+    
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', closeModal);
+    }
+    
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', confirmSquareMeters);
+    }
+    
+    // Close modal when clicking outside
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    }
+}
+
+function openModal() {
+    const modal = document.getElementById('square-meter-modal');
+    if (modal) {
+        modal.style.display = 'block';
+        // Clear previous input
+        const input = document.getElementById('square-meter-input');
+        if (input) {
+            input.value = '';
+        }
+    }
+}
+
+function closeModal() {
+    const modal = document.getElementById('square-meter-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function confirmSquareMeters() {
+    const input = document.getElementById('square-meter-input');
+    const squareMeters = parseFloat(input.value);
+    
+    if (isNaN(squareMeters) || squareMeters <= 0) {
+        alert('Please enter a valid square meter value');
+        return;
+    }
+    
+    selectedOptions.squareMeters = squareMeters;
+    selectedOptions.constructionType = 'square-meter';
+    
+    // Update the display to show selected option
+    const constructionTypes = document.querySelectorAll('.construction-type');
+    constructionTypes.forEach(t => t.classList.remove('selected'));
+    
+    // Select the square-meter option
+    const squareMeterOption = document.querySelector('.construction-type[data-construction="square-meter"]');
+    if (squareMeterOption) {
+        squareMeterOption.classList.add('selected');
+    }
+    
+    updatePrice();
+    updateContinueButton();
+    updateAccessibleTabs();
+    closeModal();
+}
+
+function updateConstructionTypeDisplay() {
+    // You can add visual feedback here to show that by-meter option is selected
+    // For example, highlight a button or show selected state
+    console.log(`Selected: By square meter (${selectedOptions.squareMeters} sq m)`);
+}
+
+function switchTab(tabIndex) {
+    // Prevent switching to inaccessible tabs
+    if (!accessibleTabs[tabIndex]) {
+        return;
+    }
+    
+    const tabItems = document.querySelectorAll('.tab-item');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    // Remove active classes
+    tabItems.forEach(item => item.classList.remove('active'));
+    tabContents.forEach(content => content.classList.remove('active'));
+    
+    // Add active classes
+    tabItems[tabIndex].classList.add('active');
+    tabContents[tabIndex].classList.add('active');
+    
+    currentTab2 = tabIndex;
+    
+    // If switching to green cleaning tab, ensure proper defaults
+    if (tabIndex === 1) { // Assuming green cleaning is tab index 1
+        selectedOptions.beds = 1;
+        selectedOptions.baths = 1;
+        // Update the select elements to show correct values
+        const greenBedsSelect = document.getElementById('green-beds');
+        const greenBathsSelect = document.getElementById('green-baths');
+        if (greenBedsSelect) greenBedsSelect.value = '1';
+        if (greenBathsSelect) greenBathsSelect.value = '1';
+        // Update price after setting defaults
+        updatePrice();
+    }
+    
+    updateContinueButton();
+    updateAccessibleTabs();
+}
+
+function nextTab() {
+    if (currentTab2 < 3 && isCurrentTabComplete()) {
+        switchTab(currentTab2 + 1);
+    } else if (currentTab2 === 3 && isCurrentTabComplete()) {
+        // Submit form
+        submitBooking();
+    }
+}
+
+function initializeServiceSelection() {
+    const serviceCards = document.querySelectorAll('[data-service]');
+    serviceCards.forEach(card => {
+        card.addEventListener('click', () => {
+            // Remove previous selection
+            serviceCards.forEach(c => c.classList.remove('selected'));
+            // Add selection to clicked card
+            card.classList.add('selected');
+            
+            selectedService2 = card.dataset.service;
+            showServiceOptions(selectedService2);
+            updatePrice();
+            updateContinueButton();
+            updateAccessibleTabs();
+        });
+    });
+}
+
+function showServiceOptions(service) {
+    // Hide all service options
+    const allOptions = document.querySelectorAll('.service-options');
+    allOptions.forEach(option => option.classList.add('hidden'));
+    
+    // Show selected service options
+    const selectedOption = document.getElementById(`${service}-options`);
+    if (selectedOption) {
+        selectedOption.classList.remove('hidden');
+    }
+    
+    // Update add-ons visibility
+    updateAddonsVisibility(service);
+}
+
+function updateAddonsVisibility(service) {
+    const applianceAddon = document.getElementById('appliance-addon');
+    const garageAddon = document.getElementById('garage-addon');
+    
+    if (service === 'office') {
+        applianceAddon.classList.add('hidden');
+        garageAddon.classList.add('hidden');
+    } else {
+        applianceAddon.classList.remove('hidden');
+        garageAddon.classList.remove('hidden');
+    }
+}
+
+function initializeOptions() {
+    // Residential cleaning type selection
+    const cleaningTypes = document.querySelectorAll('.cleaning-type');
+    cleaningTypes.forEach(type => {
+        type.addEventListener('click', () => {
+            cleaningTypes.forEach(t => t.classList.remove('selected'));
+            type.classList.add('selected');
+            selectedOptions.cleaningType = type.dataset.cleaning;
+            updateContinueButton();
+            updateAccessibleTabs();
             updatePrice();
         });
+    });
 
-        function initializeTabs() {
-            const tabItems = document.querySelectorAll('.tab-item');
-            tabItems.forEach((tab, index) => {
-                tab.addEventListener('click', () => switchTab(index));
-            });
-        }
-
-        function switchTab(tabIndex) {
-            const tabItems = document.querySelectorAll('.tab-item');
-            const tabContents = document.querySelectorAll('.tab-content');
+    // Construction type selection
+    const constructionTypes = document.querySelectorAll('.construction-type');
+    constructionTypes.forEach(type => {
+        type.addEventListener('click', () => {
+            const constructionType = type.dataset.construction;
             
-            // Remove active classes
-            tabItems.forEach(item => item.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
+            // If square-meter is clicked, open modal instead of regular selection
+            if (constructionType === 'square-meter') {
+                // Remove selection from other construction types
+                constructionTypes.forEach(t => t.classList.remove('selected'));
+                openModal();
+                return;
+            }
             
-            // Add active classes
-            tabItems[tabIndex].classList.add('active');
-            tabContents[tabIndex].classList.add('active');
+            // Regular construction type selection
+            constructionTypes.forEach(t => t.classList.remove('selected'));
+            type.classList.add('selected');
+            selectedOptions.constructionType = constructionType;
             
-            currentTab2 = tabIndex;
+            // Reset square meters when selecting preset options
+            selectedOptions.squareMeters = 0;
+            
+            updatePrice();
             updateContinueButton();
+            updateAccessibleTabs();
+        });
+    });
+
+    // Office type selection - UPDATED
+    const officeTypes = document.querySelectorAll('.office-type');
+    officeTypes.forEach(type => {
+        type.addEventListener('click', () => {
+            officeTypes.forEach(t => t.classList.remove('selected'));
+            type.classList.add('selected');
+            selectedOptions.officeSize = type.dataset.office;
+            updateContinueButton();
+            updateAccessibleTabs();
+            updatePrice();
+        });
+    });
+
+    // Beds and baths selection
+    const bedsSelect = document.getElementById('beds');
+    const bathsSelect = document.getElementById('baths');
+    const greenBedsSelect = document.getElementById('green-beds');
+    const greenBathsSelect = document.getElementById('green-baths');
+
+    if (bedsSelect) {
+        bedsSelect.addEventListener('change', () => {
+            selectedOptions.beds = parseInt(bedsSelect.value);
+            updateContinueButton();
+            updateAccessibleTabs();
+            updatePrice();
+        });
+    }
+
+    if (bathsSelect) {
+        bathsSelect.addEventListener('change', () => {
+            selectedOptions.baths = parseInt(bathsSelect.value);
+            updateContinueButton();
+            updateAccessibleTabs();
+            updatePrice();
+        });
+    }
+
+    if (greenBedsSelect) {
+        greenBedsSelect.addEventListener('change', () => {
+            selectedOptions.beds = parseInt(greenBedsSelect.value);
+            updatePrice();
+        });
+    }
+
+    if (greenBathsSelect) {
+        greenBathsSelect.addEventListener('change', () => {
+            selectedOptions.baths = parseInt(greenBathsSelect.value);
+            updatePrice();
+        });
+    }
+
+    // Frequency selection (once-off vs recurring)
+    const frequencyRadios = document.querySelectorAll('input[name="service-frequency"]');
+    frequencyRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            selectedOptions.frequency = radio.value;
+            toggleRecurringOptions('recurring-options', radio.value === 'recurring');
+            updatePrice();
+        });
+    });
+
+    const greenFrequencyRadios = document.querySelectorAll('input[name="green-frequency"]');
+    greenFrequencyRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            selectedOptions.frequency = radio.value;
+            toggleRecurringOptions('green-recurring-options', radio.value === 'recurring');
+            updatePrice();
+        });
+    });
+
+    const constructionFrequencyRadios = document.querySelectorAll('input[name="construction-frequency"]');
+    constructionFrequencyRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            selectedOptions.frequency = radio.value;
+            updatePrice();
+        });
+    });
+
+    // UPDATED: Office frequency selection
+    const officeFrequencyRadios = document.querySelectorAll('input[name="office-frequency"]');
+    officeFrequencyRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            selectedOptions.frequency = radio.value;
+            updatePrice();
+        });
+    });
+
+    // Recurring frequency selection
+    const recurringRadios = document.querySelectorAll('input[name="recurring-frequency"]');
+    recurringRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            selectedOptions.recurringFrequency = radio.value;
+            updatePrice();
+        });
+    });
+
+    const greenRecurringRadios = document.querySelectorAll('input[name="green-recurring-frequency"]');
+    greenRecurringRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            selectedOptions.recurringFrequency = radio.value;
+            updatePrice();
+        });
+    });
+}
+
+function toggleRecurringOptions(sectionId, show) {
+    const section = document.getElementById(sectionId);
+    if (section) {
+        if (show) {
+            section.classList.remove('hidden');
+        } else {
+            section.classList.add('hidden');
+            selectedOptions.recurringFrequency = '';
         }
+    }
+}
 
-        function nextTab() {
-            if (currentTab2 < 3) {
-                switchTab(currentTab2 + 1);
-            } else {
-                // Submit form
-                submitBooking();
-            }
-        }
 
-        function initializeServiceSelection() {
-            const serviceCards = document.querySelectorAll('[data-service]');
-            serviceCards.forEach(card => {
-                card.addEventListener('click', () => {
-                    // Remove previous selection
-                    serviceCards.forEach(c => c.classList.remove('selected'));
-                    // Add selection to clicked card
-                    card.classList.add('selected');
-                    
-                    selectedService2 = card.dataset.service;
-                    showServiceOptions(selectedService2);
-                    updatePrice();
-                });
-            });
-        }
 
-        function showServiceOptions(service) {
-            // Hide all service options
-            const allOptions = document.querySelectorAll('.service-options');
-            allOptions.forEach(option => option.classList.add('hidden'));
-            
-            // Show selected service options
-            const selectedOption = document.getElementById(`${service}-options`);
-            if (selectedOption) {
-                selectedOption.classList.remove('hidden');
-            }
-            
-            // Update add-ons visibility
-            updateAddonsVisibility(service);
-        }
+function calculatePrice() {
+    let totalPrice = 0;
+    
+    if (!selectedService2) return totalPrice;
 
-        function updateAddonsVisibility(service) {
-            const applianceAddon = document.getElementById('appliance-addon');
-            const garageAddon = document.getElementById('garage-addon');
-            
-            if (service === 'office') {
-                applianceAddon.classList.add('hidden');
-                garageAddon.classList.add('hidden');
-            } else {
-                applianceAddon.classList.remove('hidden');
-                garageAddon.classList.remove('hidden');
-            }
-        }
-
-        function initializeOptions() {
-            // Residential cleaning type selection
-            const cleaningTypes = document.querySelectorAll('.cleaning-type');
-            cleaningTypes.forEach(type => {
-                type.addEventListener('click', () => {
-                    cleaningTypes.forEach(t => t.classList.remove('selected'));
-                    type.classList.add('selected');
-                    selectedOptions.cleaningType = type.dataset.cleaning;
-                    updatePrice();
-                });
-            });
-
-            // Construction type selection
-            const constructionTypes = document.querySelectorAll('.construction-type');
-            constructionTypes.forEach(type => {
-                type.addEventListener('click', () => {
-                    constructionTypes.forEach(t => t.classList.remove('selected'));
-                    type.classList.add('selected');
-                    selectedOptions.constructionType = type.dataset.construction;
-                    updatePrice();
-                });
-            });
-
-            // Office type selection
-            const officeTypes = document.querySelectorAll('.office-type');
-            officeTypes.forEach(type => {
-                type.addEventListener('click', () => {
-                    officeTypes.forEach(t => t.classList.remove('selected'));
-                    type.classList.add('selected');
-                    selectedOptions.officeSize = type.dataset.office;
-                    updatePrice();
-                });
-            });
-
-            // Beds and baths selection
-            const bedsSelect = document.getElementById('beds');
-            const bathsSelect = document.getElementById('baths');
-            const greenBedsSelect = document.getElementById('green-beds');
-            const greenBathsSelect = document.getElementById('green-baths');
-
-            if (bedsSelect) {
-                bedsSelect.addEventListener('change', () => {
-                    selectedOptions.beds = parseInt(bedsSelect.value);
-                    updatePrice();
-                });
-            }
-
-            if (bathsSelect) {
-                bathsSelect.addEventListener('change', () => {
-                    selectedOptions.baths = parseInt(bathsSelect.value);
-                    updatePrice();
-                });
-            }
-
-            if (greenBedsSelect) {
-                greenBedsSelect.addEventListener('change', () => {
-                    selectedOptions.beds = parseInt(greenBedsSelect.value);
-                    updatePrice();
-                });
-            }
-
-            if (greenBathsSelect) {
-                greenBathsSelect.addEventListener('change', () => {
-                    selectedOptions.baths = parseInt(greenBathsSelect.value);
-                    updatePrice();
-                });
-            }
-
-            // Frequency selection (once-off vs recurring)
-            const frequencyRadios = document.querySelectorAll('input[name="service-frequency"]');
-            frequencyRadios.forEach(radio => {
-                radio.addEventListener('change', () => {
-                    selectedOptions.frequency = radio.value;
-                    toggleRecurringOptions('recurring-options', radio.value === 'recurring');
-                    updatePrice();
-                });
-            });
-
-            const greenFrequencyRadios = document.querySelectorAll('input[name="green-frequency"]');
-            greenFrequencyRadios.forEach(radio => {
-                radio.addEventListener('change', () => {
-                    selectedOptions.frequency = radio.value;
-                    toggleRecurringOptions('green-recurring-options', radio.value === 'recurring');
-                    updatePrice();
-                });
-            });
-
-            const constructionFrequencyRadios = document.querySelectorAll('input[name="construction-frequency"]');
-            constructionFrequencyRadios.forEach(radio => {
-                radio.addEventListener('change', () => {
-                    selectedOptions.frequency = radio.value;
-                    updatePrice();
-                });
-            });
-
-            const officeFrequencyRadios = document.querySelectorAll('input[name="office-frequency"]');
-            officeFrequencyRadios.forEach(radio => {
-                radio.addEventListener('change', () => {
-                    selectedOptions.frequency = radio.value;
-                    updatePrice();
-                });
-            });
-
-            // Recurring frequency selection
-            const recurringRadios = document.querySelectorAll('input[name="recurring-frequency"]');
-            recurringRadios.forEach(radio => {
-                radio.addEventListener('change', () => {
-                    selectedOptions.recurringFrequency = radio.value;
-                    updatePrice();
-                });
-            });
-
-            const greenRecurringRadios = document.querySelectorAll('input[name="green-recurring-frequency"]');
-            greenRecurringRadios.forEach(radio => {
-                radio.addEventListener('change', () => {
-                    selectedOptions.recurringFrequency = radio.value;
-                    updatePrice();
-                });
-            });
-        }
-
-        function toggleRecurringOptions(sectionId, show) {
-            const section = document.getElementById(sectionId);
-            if (section) {
-                if (show) {
-                    section.classList.remove('hidden');
-                } else {
-                    section.classList.add('hidden');
-                    selectedOptions.recurringFrequency = '';
+    if (selectedService2 === 'residential') {
+        if (selectedOptions.frequency === 'recurring' && selectedOptions.recurringFrequency) {
+            // Recurring pricing
+            const beds = selectedOptions.beds;
+            totalPrice = pricing.recurring[beds][selectedOptions.recurringFrequency] || 0;
+        } else {
+            // Once-off pricing
+            const cleaningType = selectedOptions.cleaningType;
+            if (cleaningType && pricing.residential[cleaningType]) {
+                const beds = selectedOptions.beds;
+                const baths = selectedOptions.baths;
+                
+                if (cleaningType === 'standard') {
+                    totalPrice = beds * 300 + baths * 300;
+                } else if (cleaningType === 'deep') {
+                    totalPrice = beds * 475 + baths * 475;
+                } else if (cleaningType === 'move') {
+                    totalPrice = 1400 + (beds + baths - 1) * 80;
                 }
             }
         }
-
-        function initializeAddons() {
-            const checkboxItems = document.querySelectorAll('.checkbox-item[data-addon]');
-            checkboxItems.forEach(item => {
-                const checkbox = item.querySelector('input[type="checkbox"]');
-                const addonType = item.dataset.addon;
-                
-                item.addEventListener('click', (e) => {
-                    if (e.target.type !== 'checkbox') {
-                        checkbox.checked = !checkbox.checked;
-                    }
-                    
-                    if (checkbox.checked) {
-                        item.classList.add('selected');
-                        if (!selectedOptions.addons.includes(addonType)) {
-                            selectedOptions.addons.push(addonType);
-                        }
-                    } else {
-                        item.classList.remove('selected');
-                        selectedOptions.addons = selectedOptions.addons.filter(addon => addon !== addonType);
-                    }
-                    
-                    updatePrice();
-                });
-
-                checkbox.addEventListener('change', () => {
-                    if (checkbox.checked) {
-                        item.classList.add('selected');
-                        if (!selectedOptions.addons.includes(addonType)) {
-                            selectedOptions.addons.push(addonType);
-                        }
-                    } else {
-                        item.classList.remove('selected');
-                        selectedOptions.addons = selectedOptions.addons.filter(addon => addon !== addonType);
-                    }
-                    
-                    updatePrice();
-                });
-            });
+    } else if (selectedService2 === 'green') {
+        if (selectedOptions.frequency === 'recurring' && selectedOptions.recurringFrequency) {
+            // Recurring pricing
+            const beds = selectedOptions.beds;
+            totalPrice = pricing.recurring[beds][selectedOptions.recurringFrequency] || 0;
+        } else {
+            // Once-off pricing
+            const beds = selectedOptions.beds;
+            totalPrice = pricing.green[beds] || 1000;
         }
-
-        function calculatePrice() {
-            let totalPrice = 0;
-            
-            if (!selectedService2) return totalPrice;
-
-            if (selectedService2 === 'residential') {
-                if (selectedOptions.frequency === 'recurring' && selectedOptions.recurringFrequency) {
-                    // Recurring pricing
-                    const beds = selectedOptions.beds;
-                    totalPrice = pricing.recurring[beds][selectedOptions.recurringFrequency] || 0;
-                } else {
-                    // Once-off pricing
-                    const cleaningType = selectedOptions.cleaningType;
-                    if (cleaningType && pricing.residential[cleaningType]) {
-                        const beds = selectedOptions.beds;
-                        const baths = selectedOptions.baths;
-                        
-                        if (cleaningType === 'standard') {
-                            totalPrice = beds * 300 + baths * 300;
-                        } else if (cleaningType === 'deep') {
-                            totalPrice = beds * 475 + baths * 475;
-                        } else if (cleaningType === 'move') {
-                            totalPrice = 1400 + (beds - 1) * 80;
-                        }
-                    }
-                }
-            } else if (selectedService2 === 'green') {
-                if (selectedOptions.frequency === 'recurring' && selectedOptions.recurringFrequency) {
-                    // Recurring pricing
-                    const beds = selectedOptions.beds;
-                    totalPrice = pricing.recurring[beds][selectedOptions.recurringFrequency] || 0;
-                } else {
-                    // Once-off pricing
-                    const beds = selectedOptions.beds;
-                    totalPrice = pricing.green[beds] || 1000;
-                }
-            } else if (selectedService2 === 'post-construction') {
-                totalPrice = 1500; // Base price for post-construction
-            } else if (selectedService2 === 'office') {
-                totalPrice = 3500; // Base price for office cleaning
-            }
-
-            // Add addon prices
-            selectedOptions.addons.forEach(addon => {
-                totalPrice += pricing.addons[addon] || 0;
-            });
-
-            return totalPrice;
-        }
-
-        function updatePrice() {
-            const price = calculatePrice();
-            const priceDisplay = document.getElementById('total-price');
-            priceDisplay.textContent = `R${price} ZAR`;
-        }
-
-        function updateContinueButton() {
-            const continueBtn = document.getElementById('continue-btn');
-            
-            if (currentTab2 === 0) {
-                continueBtn.textContent = 'Continue to Next Step';
-                continueBtn.disabled = !selectedService2;
-            } else if (currentTab2 === 1) {
-                continueBtn.textContent = 'Continue to Add-ons';
-                continueBtn.disabled = false;
-            } else if (currentTab2 === 2) {
-                continueBtn.textContent = 'Continue to Details';
-                continueBtn.disabled = false;
-            } else if (currentTab2 === 3) {
-                continueBtn.textContent = 'Submit Booking';
-                
-                // Check if required fields are filled
-                const fullName = document.getElementById('full-name').value;
-                const email = document.getElementById('email').value;
-                const phone = document.getElementById('phone').value;
-                const preferredDate = document.getElementById('preferred-booking-date').value;
-                const preferredTime = document.getElementById('preferred-time').value;
-                const address = document.getElementById('address').value;
-                
-                continueBtn.disabled = !fullName || !email || !phone || !preferredDate || !preferredTime || !address;
-            }
-        }
-
+    } else if (selectedService2 === 'post-construction') {
+        // Updated post-construction pricing
+        const constructionType = selectedOptions.constructionType;
         
-       
-        function submitBooking() {
-            // Collect all form data
-            const bookingData = {
-                service: selectedService2,
-                options: selectedOptions,
-                addons: selectedOptions.addons,
-                totalPrice: calculatePrice(),
-                customerInfo: {
-                    fullName: document.getElementById('full-name').value,
-                    email: document.getElementById('email').value,
-                    phone: document.getElementById('phone').value,
-                    bookingType: document.querySelector('input[name="booking-type"]:checked').value,
-                    preferredDate: document.getElementById('preferred-booking-date').value,
-                    preferredTime: document.getElementById('preferred-time').value,
-                    address: document.getElementById('address').value
-                },
-                assessment: {
-                    virtual: document.getElementById('virtual-assessment').checked,
-                    onsite: document.getElementById('onsite-assessment').checked,
-                    preferredDateTime: document.getElementById('preferred-date').value
-                }
-            };
-            
-            console.log('Booking Data:', bookingData);
-            alert('Booking submitted successfully! We will contact you soon.');
+        if (constructionType === 'square-meter' && selectedOptions.squareMeters > 0) {
+            // Use average of min and max rate (R37.50 per square meter)
+            const averageRate = (pricing.construction.perSquareMeter.min + pricing.construction.perSquareMeter.max) / 2;
+            totalPrice = selectedOptions.squareMeters * averageRate;
+        } else if (constructionType && pricing.construction[constructionType]) {
+            totalPrice = pricing.construction[constructionType];
+        } else {
+            totalPrice = 1500; // Default to small job price
         }
+    } else if (selectedService2 === 'office') {
+        const officeSize = selectedOptions.officeSize;
+        const frequency = selectedOptions.frequency;
 
-        // Form validation for the details tab
-        document.addEventListener('input', (e) => {
-            if (currentTab2 === 3) {
-                updateContinueButton();
-            }
-        });
-
-        document.addEventListener('change', (e) => {
-            if (currentTab2 === 3) {
-                updateContinueButton();
-            }
-        });
-
-        // Assessment checkbox logic (only one can be selected)
-        const virtualAssessment = document.getElementById('virtual-assessment');
-        const onsiteAssessment = document.getElementById('onsite-assessment');
-
-        if (virtualAssessment && onsiteAssessment) {
-            virtualAssessment.addEventListener('change', () => {
-                if (virtualAssessment.checked) {
-                    onsiteAssessment.checked = false;
+        if (frequency === 'once-off') {
+            totalPrice = pricing.office.onceOff[officeSize] || 0;
+        } else if (frequency === 'recurring') {
+            if (officeSize === 'large') {
+                // Custom quote required
+                totalPrice = 0;
+                const priceMessage = document.getElementById('price-message');
+                if (priceMessage) {
+                    priceMessage.textContent = 'Large offices require a custom quote. Please contact us.';
+                    priceMessage.style.display = 'block';
                 }
-            });
-
-            onsiteAssessment.addEventListener('change', () => {
-                if (onsiteAssessment.checked) {
-                    virtualAssessment.checked = false;
+            } else {
+                totalPrice = pricing.office.recurring[officeSize] || 0;
+                const priceMessage = document.getElementById('price-message');
+                if (priceMessage) {
+                    priceMessage.textContent = '💡 10–15% discount available for recurring office cleaning.';
+                    priceMessage.style.display = 'block';
                 }
-            });
+            }
         }
+    }
+
+    // Add addon prices
+    selectedOptions.addons.forEach(addon => {
+        totalPrice += pricing.addons[addon] || 0;
+    });
+
+    return totalPrice;
+}
+
+function updatePrice() {
+    const price = calculatePrice();
+    const priceDisplay = document.getElementById('total-price');
+    const priceMessage = document.getElementById('price-message');
+    
+    priceDisplay.textContent = `R${price} ZAR`;
+    
+    // Show message for post-construction pricing
+    if (selectedService2 === 'post-construction' && selectedOptions.constructionType) {
+        if (priceMessage) {
+            priceMessage.textContent = 'This is not the final total. A final total will be given after a personal consultation.';
+            priceMessage.style.display = 'block';
+        }
+    } else {
+        if (priceMessage) {
+            priceMessage.textContent = '';
+            priceMessage.style.display = 'none';
+        }
+    }
+}
+
+function updateContinueButton() {
+    const continueBtn = document.getElementById('continue-btn');
+    
+    if (currentTab2 === 0) {
+        continueBtn.textContent = 'Continue to Next Step';
+        continueBtn.disabled = !selectedService2;
+    } else if (currentTab2 === 1) {
+        continueBtn.textContent = 'Continue to Add-ons';
+        // For residential service, require cleaning type selection
+        if (selectedService2 === 'residential') {
+            continueBtn.disabled = !selectedOptions.cleaningType;
+        } else if (selectedService2 === 'office') {
+            continueBtn.disabled = !selectedOptions.officeSize;
+        } else if (selectedService2 === 'post-construction') {
+            continueBtn.disabled = !selectedOptions.constructionType;
+        } else {
+            continueBtn.disabled = false;
+        }
+    } else if (currentTab2 === 2) {
+        continueBtn.textContent = 'Continue to Details';
+        continueBtn.disabled = false;
+    } else if (currentTab2 === 3) {
+        continueBtn.textContent = 'Submit Booking';
+        
+        // Check if required fields are filled
+        const fullName = document.getElementById('full-name')?.value || '';
+        const email = document.getElementById('email')?.value || '';
+        const phone = document.getElementById('phone')?.value || '';
+        const preferredDate = document.getElementById('preferred-booking-date')?.value || '';
+        const preferredTime = document.getElementById('preferred-time')?.value || '';
+        const address = document.getElementById('address')?.value || '';
+        
+        continueBtn.disabled = !fullName || !email || !phone || !preferredDate || !preferredTime || !address;
+    }
+}
+
+function submitBooking() {
+    // Collect all form data
+    const bookingData = {
+        service: selectedService2,
+        options: selectedOptions,
+        addons: selectedOptions.addons,
+        totalPrice: calculatePrice(),
+        customerInfo: {
+            fullName: document.getElementById('full-name').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            bookingType: document.querySelector('input[name="booking-type"]:checked').value,
+            preferredDate: document.getElementById('preferred-booking-date').value,
+            preferredTime: document.getElementById('preferred-time').value,
+            address: document.getElementById('address').value
+        },
+        assessment: {
+            virtual: document.getElementById('virtual-assessment').checked,
+            onsite: document.getElementById('onsite-assessment').checked,
+            preferredDateTime: document.getElementById('preferred-date').value
+        }
+    };
+    
+    console.log('Booking Data:', bookingData);
+    alert('Booking submitted successfully! We will contact you soon.');
+}
+
+// Form validation for the details tab
+document.addEventListener('input', (e) => {
+    if (currentTab2 === 3) {
+        updateContinueButton();
+        updateAccessibleTabs();
+    }
+});
+
+document.addEventListener('change', (e) => {
+    if (currentTab2 === 3) {
+        updateContinueButton();
+        updateAccessibleTabs();
+    }
+});
+
+// Assessment checkbox logic (only one can be selected)
+const virtualAssessment = document.getElementById('virtual-assessment');
+const onsiteAssessment = document.getElementById('onsite-assessment');
+
+if (virtualAssessment && onsiteAssessment) {
+    virtualAssessment.addEventListener('change', () => {
+        if (virtualAssessment.checked) {
+            onsiteAssessment.checked = false;
+        }
+    });
+
+    onsiteAssessment.addEventListener('change', () => {
+        if (onsiteAssessment.checked) {
+            virtualAssessment.checked = false;
+        }
+    });
+}
