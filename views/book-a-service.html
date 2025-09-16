@@ -26,10 +26,10 @@
                     <span class="tab-number">2</span>Options
                 </div>
                 <div class="tab-item" data-tab="3">
-                    <span class="tab-number">3</span>Add-ons
+                    <span class="tab-number">3</span>Your Information
                 </div>
                 <div class="tab-item" data-tab="4">
-                    <span class="tab-number">4</span>Details
+                    <span class="tab-number">4</span>Booking Details
                 </div>
             </div>
 
@@ -90,7 +90,11 @@
 
         <div class="tab-content" id="options">
             <!-- Residential Options -->
+            
+
             <div class="service-options" id="residential-options">
+                <h1>Residential</h1>
+                <br>
                   <h3 class="section-title">Our services include the living/dining room and kitchen.</h3>
                 <div class="note">
                     Every house is different. Our quote will be based on your exact needs, the size and condition of your home. You can request a free virtual or in-person assessment.
@@ -189,6 +193,8 @@
 
             <!-- Green Cleaning Options -->
             <div class="service-options hidden" id="green-options">
+                 <h1>Green Cleaning</h1>
+                <br>
                 <div class="note">
                     Every house is different. Our quote will be based on your exact needs, the size and condition of your home. You can request a free virtual or in-person assessment.
                 </div>
@@ -249,10 +255,10 @@
 
             <!-- Post Construction Options -->
             <div class="service-options hidden" id="post-construction-options">
+                <h1>Post Construction</h1>
+                <br>
+                 <div class="tip">The total below is not the final total. A final total will be given after a personal consultation.</div>
                 <h3>Our services include the living room and kitchen.</h3>
-        
-                
-                <div class="tip">💡 10–15% discount for recurring clients</div>
                 
                 <h3>Project Size:</h3>
                  <div class="service-grid">
@@ -291,11 +297,14 @@
                         </div>
                     </div>
                 </div>
+                <!-- Add this element where you want the price message to appear (near your price display) -->
+<div id="price-message" class="price-message" >💡 Large construction cleanup require a custom quote. Please contact us.</div>
+
              </div>
 
 
 <!-- modal -->
-<div id="square-meter-modal" class="modal" style="display: none;">
+<div id="square-meter-modal" class="modal" >
     <div class="modal-content">
         <span class="close-modal">&times;</span>
         <h2>Enter Square Meters</h2>
@@ -311,14 +320,15 @@
     </div>
 </div>
 
-<!-- Add this element where you want the price message to appear (near your price display) -->
-<div id="price-message" class="price-message" style="display: none;"></div>
 
 
             </div>
 
             <!-- Office Options -->
             <div class="service-options hidden" id="office-options">
+                 <h1>Office/ Commercial</h1>
+                <br>
+                 <div class="tip">The total below is not the final total. A final total will be given after a personal consultation.</div>
                 <div class="radio-group">
                     <label class="radio-item">
                         <input type="radio" name="office-frequency" value="once-off" checked>
@@ -326,11 +336,11 @@
                     </label>
                     <label class="radio-item">
                         <input type="radio" name="office-frequency" value="recurring">
-                        Recurring
+                        Recurring (Monthly)
                     </label>
                 </div>
                 
-                <div class="tip">💡 10–15% discount for recurring clients</div>
+                
                 
                 <h3>Office Size:</h3>
               <div class="service-grid">
@@ -362,7 +372,7 @@
                 </div>
              </div>
 
-             
+              <div id="price-message" class="price-message" >💡 Large offices require a custom quote. Please contact us.</div>
             </div>
         </div>
 
@@ -387,11 +397,11 @@
                         <label class="form-label">Booking Type</label>
                         <div class="radio-group">
                             <div class="radio-option">
-                                <div class="radio" data-value="personal"></div>
+                                <input type= "radio" class="radio" data-value="personal" ></input>
                                 <span>Personal</span>
                             </div>
                             <div class="radio-option">
-                                <div class="radio" data-value="company"></div>
+                                <input type= "radio" class="radio" data-value="company"></input>
                                 <span>Company</span>
                             </div>
                         </div>

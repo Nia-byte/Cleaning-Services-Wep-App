@@ -9,8 +9,9 @@ let selectedOptions = {
     frequency: 'once-off',
     recurringFrequency: '',
     officeSize: '',
-    constructionType: '',
-    squareMeters: 0 // Add square meters for by-meter pricing
+    constructionType: null,
+    squareMeters: 0, // Add square meters for by-meter pricing
+    addons: []
 };
 
 // Track which tabs are accessible
@@ -160,9 +161,8 @@ function initializeContinueButton() {
     }
 }
 
-// Add modal initialization
+// Modal functions - Fixed and integrated
 function initializeModal() {
-    // Modal close functionality
     const modal = document.getElementById('square-meter-modal');
     const closeBtn = document.querySelector('.close-modal');
     const cancelBtn = document.getElementById('cancel-modal');
@@ -188,28 +188,44 @@ function initializeModal() {
             }
         });
     }
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.style.display === 'block') {
+            closeModal();
+        }
+    });
 }
 
 function openModal() {
     const modal = document.getElementById('square-meter-modal');
     if (modal) {
-        modal.style.display = 'block';
         // Clear previous input
         const input = document.getElementById('square-meter-input');
         if (input) {
             input.value = '';
+            setTimeout(() => input.focus(), 100); // Focus the input
         }
+        
+        // Show the modal
+        modal.style.display = 'block';
+        
+        // Prevent body scroll when modal is open
+        document.body.style.overflow = 'hidden';
     }
 }
 
-function closeModal() {
+       function closeModal() {
     const modal = document.getElementById('square-meter-modal');
     if (modal) {
         modal.style.display = 'none';
+        
+        // Restore body scroll
+        document.body.style.overflow = 'auto';
     }
 }
 
-function confirmSquareMeters() {
+ function confirmSquareMeters() {
     const input = document.getElementById('square-meter-input');
     const squareMeters = parseFloat(input.value);
     
@@ -237,6 +253,7 @@ function confirmSquareMeters() {
     closeModal();
 }
 
+
 function updateConstructionTypeDisplay() {
     // You can add visual feedback here to show that by-meter option is selected
     // For example, highlight a button or show selected state
@@ -262,8 +279,26 @@ function switchTab(tabIndex) {
     
     currentTab2 = tabIndex;
     
+    // If switching to options tab (tab 1), show appropriate service options
+    if (tabIndex === 1 && selectedService2) {
+        showServiceOptions(selectedService2);
+        // Now update price when we're on the options tab
+        updatePrice();
+    }
+    
+    // If switching away from service selection tab, show price
+    if (tabIndex !== 0 && selectedService2) {
+        updatePrice();
+    } else if (tabIndex === 0) {
+        // Reset price display on service selection tab
+        const priceDisplay = document.getElementById('total-price');
+        if (priceDisplay) {
+            priceDisplay.textContent = 'R0 ZAR';
+        }
+    }
+    
     // If switching to green cleaning tab, ensure proper defaults
-    if (tabIndex === 1) { // Assuming green cleaning is tab index 1
+    if (tabIndex === 1 && selectedService2 === 'green') {
         selectedOptions.beds = 1;
         selectedOptions.baths = 1;
         // Update the select elements to show correct values
@@ -278,6 +313,7 @@ function switchTab(tabIndex) {
     updateContinueButton();
     updateAccessibleTabs();
 }
+
 
 function nextTab() {
     if (currentTab2 < 3 && isCurrentTabComplete()) {
@@ -298,8 +334,18 @@ function initializeServiceSelection() {
             card.classList.add('selected');
             
             selectedService2 = card.dataset.service;
-            showServiceOptions(selectedService2);
-            updatePrice();
+            
+            // Don't show price on service selection tab (tab 0)
+            if (currentTab2 !== 0) {
+                updatePrice();
+            } else {
+                // Reset price display on service selection tab
+                const priceDisplay = document.getElementById('total-price');
+                if (priceDisplay) {
+                    priceDisplay.textContent = 'R0 ZAR';
+                }
+            }
+            
             updateContinueButton();
             updateAccessibleTabs();
         });
@@ -334,6 +380,7 @@ function updateAddonsVisibility(service) {
     }
 }
 
+// Update the construction type initialization to work with your existing system
 function initializeOptions() {
     // Residential cleaning type selection
     const cleaningTypes = document.querySelectorAll('.cleaning-type');
@@ -348,7 +395,7 @@ function initializeOptions() {
         });
     });
 
-    // Construction type selection
+    // Construction type selection - FIXED
     const constructionTypes = document.querySelectorAll('.construction-type');
     constructionTypes.forEach(type => {
         type.addEventListener('click', () => {
@@ -356,8 +403,7 @@ function initializeOptions() {
             
             // If square-meter is clicked, open modal instead of regular selection
             if (constructionType === 'square-meter') {
-                // Remove selection from other construction types
-                constructionTypes.forEach(t => t.classList.remove('selected'));
+                // Don't remove selection here - let the modal confirmation handle it
                 openModal();
                 return;
             }
@@ -376,7 +422,7 @@ function initializeOptions() {
         });
     });
 
-    // Office type selection - UPDATED
+    // Office type selection
     const officeTypes = document.querySelectorAll('.office-type');
     officeTypes.forEach(type => {
         type.addEventListener('click', () => {
@@ -454,7 +500,6 @@ function initializeOptions() {
         });
     });
 
-    // UPDATED: Office frequency selection
     const officeFrequencyRadios = document.querySelectorAll('input[name="office-frequency"]');
     officeFrequencyRadios.forEach(radio => {
         radio.addEventListener('change', () => {
@@ -476,6 +521,27 @@ function initializeOptions() {
     greenRecurringRadios.forEach(radio => {
         radio.addEventListener('change', () => {
             selectedOptions.recurringFrequency = radio.value;
+            updatePrice();
+        });
+    });
+}
+
+function initializeAddons() {
+    // Initialize addons array
+    selectedOptions.addons = [];
+    
+    // Add event listeners for addon checkboxes (if they exist)
+    const addonCheckboxes = document.querySelectorAll('input[type="checkbox"][data-addon]');
+    addonCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            const addonName = checkbox.dataset.addon;
+            if (checkbox.checked) {
+                if (!selectedOptions.addons.includes(addonName)) {
+                    selectedOptions.addons.push(addonName);
+                }
+            } else {
+                selectedOptions.addons = selectedOptions.addons.filter(addon => addon !== addonName);
+            }
             updatePrice();
         });
     });
@@ -553,19 +619,11 @@ function calculatePrice() {
         } else if (frequency === 'recurring') {
             if (officeSize === 'large') {
                 // Custom quote required
-                totalPrice = 0;
-                const priceMessage = document.getElementById('price-message');
-                if (priceMessage) {
-                    priceMessage.textContent = 'Large offices require a custom quote. Please contact us.';
-                    priceMessage.style.display = 'block';
-                }
+                totalPrice = 6000;
+            } else if (officeSize === 'small'){
+                totalPrice = 3500;
             } else {
-                totalPrice = pricing.office.recurring[officeSize] || 0;
-                const priceMessage = document.getElementById('price-message');
-                if (priceMessage) {
-                    priceMessage.textContent = '💡 10–15% discount available for recurring office cleaning.';
-                    priceMessage.style.display = 'block';
-                }
+                totalPrice = 4500;
             }
         }
     }
@@ -578,27 +636,18 @@ function calculatePrice() {
     return totalPrice;
 }
 
+// CORRECTED updatePrice function - replaces both conflicting versions
 function updatePrice() {
     const price = calculatePrice();
     const priceDisplay = document.getElementById('total-price');
     const priceMessage = document.getElementById('price-message');
     
-    priceDisplay.textContent = `R${price} ZAR`;
-    
-    // Show message for post-construction pricing
-    if (selectedService2 === 'post-construction' && selectedOptions.constructionType) {
-        if (priceMessage) {
-            priceMessage.textContent = 'This is not the final total. A final total will be given after a personal consultation.';
-            priceMessage.style.display = 'block';
-        }
-    } else {
-        if (priceMessage) {
-            priceMessage.textContent = '';
-            priceMessage.style.display = 'none';
-        }
+    if (priceDisplay) {
+        priceDisplay.textContent = `R${price} ZAR`;
     }
+    
+   
 }
-
 function updateContinueButton() {
     const continueBtn = document.getElementById('continue-btn');
     
@@ -662,6 +711,41 @@ function submitBooking() {
     alert('Booking submitted successfully! We will contact you soon.');
 }
 
+        // Initialize construction type selection
+        function initializeConstructionTypes() {
+            const constructionTypes = document.querySelectorAll('.construction-type');
+            constructionTypes.forEach(type => {
+                type.addEventListener('click', () => {
+                    const constructionType = type.dataset.construction;
+                    
+                    // If square-meter is clicked, open modal instead of regular selection
+                    if (constructionType === 'square-meter') {
+                        // Remove selection from other construction types first
+                        constructionTypes.forEach(t => t.classList.remove('selected'));
+                        openModal();
+                        return;
+                    }
+                    
+                    // Regular construction type selection
+                    constructionTypes.forEach(t => t.classList.remove('selected'));
+                    type.classList.add('selected');
+                    selectedOptions.constructionType = constructionType;
+                    
+                    // Reset square meters when selecting preset options
+                    selectedOptions.squareMeters = 0;
+                    
+                    updatePrice();
+                });
+            });
+        }
+
+        // Initialize everything when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeModal();
+            initializeConstructionTypes();
+        });
+
+
 // Form validation for the details tab
 document.addEventListener('input', (e) => {
     if (currentTab2 === 3) {
@@ -675,6 +759,20 @@ document.addEventListener('change', (e) => {
         updateContinueButton();
         updateAccessibleTabs();
     }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  const serviceOptions = document.querySelectorAll(".service-option");
+
+  serviceOptions.forEach(option => {
+    option.addEventListener("click", function () {
+      // Remove 'selected' from all options
+      serviceOptions.forEach(opt => opt.classList.remove("selected"));
+      
+      // Add 'selected' to the clicked one
+      this.classList.add("selected");
+    });
+  });
 });
 
 // Assessment checkbox logic (only one can be selected)
