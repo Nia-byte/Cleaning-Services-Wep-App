@@ -260,7 +260,7 @@ Please follow up with the client to confirm the appointment and send meeting det
             <h3 style="color: #4285F4;">Client Details:</h3>
             <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 4px;">
               <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Name:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${name}</td></tr>
-              <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Email:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;"><a href="mailto:${email}" style="color: #dc4c94;">${email}</a></td></tr>
+              <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Email:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;"><a href="mailto:${email}" style="color: #4285F4;">${email}</a></td></tr>
               <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Phone:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${phone || 'Not provided'}</td></tr>
               <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Date:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${date}</td></tr>
               <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Booking Type:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${bookingType}</td></tr>
