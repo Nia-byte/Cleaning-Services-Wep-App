@@ -9,7 +9,13 @@
   "dependencies": {
     "@sendgrid/mail": "^7.7.0"
   },
-  "keywords": ["cleaning", "booking", "sendgrid", "netlify", "services"],
+  "keywords": [
+    "cleaning",
+    "booking",
+    "sendgrid",
+    "netlify",
+    "services"
+  ],
   "author": "Niaimani Group",
   "license": "MIT"
 }
