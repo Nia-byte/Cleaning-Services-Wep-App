@@ -648,68 +648,167 @@ function updatePrice() {
     
    
 }
-function updateContinueButton() {
+
+
+async function submitBooking() {
+    // Show loading state
     const continueBtn = document.getElementById('continue-btn');
-    
-    if (currentTab2 === 0) {
-        continueBtn.textContent = 'Continue to Next Step';
-        continueBtn.disabled = !selectedService2;
-    } else if (currentTab2 === 1) {
-        continueBtn.textContent = 'Continue to Add-ons';
-        // For residential service, require cleaning type selection
-        if (selectedService2 === 'residential') {
-            continueBtn.disabled = !selectedOptions.cleaningType;
-        } else if (selectedService2 === 'office') {
-            continueBtn.disabled = !selectedOptions.officeSize;
-        } else if (selectedService2 === 'post-construction') {
-            continueBtn.disabled = !selectedOptions.constructionType;
-        } else {
-            continueBtn.disabled = false;
+    const originalText = continueBtn.textContent;
+    continueBtn.textContent = 'Submitting...';
+    continueBtn.disabled = true;
+
+    try {
+        // Collect all form data
+        const bookingData = {
+            service: selectedService2,
+            options: selectedOptions,
+            addons: selectedOptions.addons,
+            totalPrice: calculatePrice(),
+            customerInfo: {
+                fullName: document.querySelector('input[placeholder="Enter your full name"]').value,
+                email: document.querySelector('input[placeholder="Enter your email address"]').value,
+                phone: document.querySelector('input[placeholder="Enter your phone number"]').value,
+                bookingType: document.querySelector('input[name="booking-type"]:checked')?.value || 'personal',
+                preferredDate: document.querySelector('input[type="date"]').value,
+                preferredTime: document.querySelector('input[type="time"]').value,
+                address: document.querySelector('textarea[placeholder="Enter your complete address"]').value,
+                specialInstructions: document.querySelector('textarea[placeholder="Any specific requirements or notes"]')?.value || ''
+            }
+        };
+
+        // Validate required fields
+        const { customerInfo } = bookingData;
+        if (!customerInfo.fullName || !customerInfo.email || !customerInfo.phone || 
+            !customerInfo.preferredDate || !customerInfo.preferredTime || !customerInfo.address) {
+            throw new Error('Please fill in all required fields');
         }
-    } else if (currentTab2 === 2) {
-        continueBtn.textContent = 'Continue to Details';
+
+        // Send booking data to Netlify function
+        const response = await fetch('/.netlify/functions/send-booking-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(bookingData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            // Success
+            showSuccessMessage();
+            console.log('Booking submitted successfully:', result);
+            
+            // Optionally reset the form or redirect
+            // resetForm();
+        } else {
+            // Error from function
+            throw new Error(result.error || 'Failed to submit booking');
+        }
+
+    } catch (error) {
+        console.error('Error submitting booking:', error);
+        showErrorMessage(error.message);
+    } finally {
+        // Restore button state
+        continueBtn.textContent = originalText;
         continueBtn.disabled = false;
-    } else if (currentTab2 === 3) {
-        continueBtn.textContent = 'Submit Booking';
-        
-        // Check if required fields are filled
-        const fullName = document.getElementById('full-name')?.value || '';
-        const email = document.getElementById('email')?.value || '';
-        const phone = document.getElementById('phone')?.value || '';
-        const preferredDate = document.getElementById('preferred-booking-date')?.value || '';
-        const preferredTime = document.getElementById('preferred-time')?.value || '';
-        const address = document.getElementById('address')?.value || '';
-        
-        continueBtn.disabled = !fullName || !email || !phone || !preferredDate || !preferredTime || !address;
     }
 }
 
-function submitBooking() {
-    // Collect all form data
-    const bookingData = {
-        service: selectedService2,
-        options: selectedOptions,
-        addons: selectedOptions.addons,
-        totalPrice: calculatePrice(),
-        customerInfo: {
-            fullName: document.getElementById('full-name').value,
-            email: document.getElementById('email').value,
-            phone: document.getElementById('phone').value,
-            bookingType: document.querySelector('input[name="booking-type"]:checked').value,
-            preferredDate: document.getElementById('preferred-booking-date').value,
-            preferredTime: document.getElementById('preferred-time').value,
-            address: document.getElementById('address').value
-        },
-        assessment: {
-            virtual: document.getElementById('virtual-assessment').checked,
-            onsite: document.getElementById('onsite-assessment').checked,
-            preferredDateTime: document.getElementById('preferred-date').value
+// Add these helper functions for user feedback
+function showSuccessMessage() {
+    // Create and show success message
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'booking-message success-message';
+    messageDiv.innerHTML = `
+        <div style="
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center;
+        ">
+            <h3>Booking Submitted Successfully!</h3>
+            <p>Thank you for choosing Niaimani Group Cleaning Services. We've sent you a confirmation email and will contact you within 24 hours to confirm your booking details.</p>
+        </div>
+    `;
+    
+    // Insert the message at the top of the form
+    const contentArea = document.querySelector('.content-area');
+    contentArea.insertBefore(messageDiv, contentArea.firstChild);
+    
+    // Scroll to top to show the message
+    contentArea.scrollTop = 0;
+}
+
+function showErrorMessage(errorMessage) {
+    // Create and show error message
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'booking-message error-message';
+    messageDiv.innerHTML = `
+        <div style="
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center;
+        ">
+            <h3>Booking Submission Failed</h3>
+            <p>We're sorry, but there was an error submitting your booking: ${errorMessage}</p>
+            <p>Please try again or contact us directly at info@niaimanigroup.com</p>
+        </div>
+    `;
+    
+    // Insert the message at the top of the form
+    const contentArea = document.querySelector('.content-area');
+    contentArea.insertBefore(messageDiv, contentArea.firstChild);
+    
+    // Scroll to top to show the message
+    contentArea.scrollTop = 0;
+}
+
+// Optional: Function to reset the form after successful submission
+function resetForm() {
+    // Reset all form fields
+    document.querySelectorAll('input, textarea, select').forEach(field => {
+        if (field.type === 'radio' || field.type === 'checkbox') {
+            field.checked = false;
+        } else {
+            field.value = '';
         }
+    });
+    
+    // Reset selections
+    document.querySelectorAll('.selected').forEach(element => {
+        element.classList.remove('selected');
+    });
+    
+    // Reset state
+    selectedService2 = '';
+    selectedOptions = {
+        cleaningType: '',
+        beds: 1,
+        baths: 1,
+        frequency: 'once-off',
+        recurringFrequency: '',
+        officeSize: '',
+        constructionType: null,
+        squareMeters: 0,
+        addons: []
     };
     
-    console.log('Booking Data:', bookingData);
-    alert('Booking submitted successfully! We will contact you soon.');
+    // Go back to first tab
+    currentTab2 = 0;
+    accessibleTabs = [true, false, false, false];
+    switchTab(0);
+    updatePrice();
 }
+
 
         // Initialize construction type selection
         function initializeConstructionTypes() {
