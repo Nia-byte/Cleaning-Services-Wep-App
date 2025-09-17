@@ -648,6 +648,41 @@ function updatePrice() {
     
    
 }
+function updateContinueButton() {
+    const continueBtn = document.getElementById('continue-btn');
+    
+    if (currentTab2 === 0) {
+        continueBtn.textContent = 'Continue to Next Step';
+        continueBtn.disabled = !selectedService2;
+    } else if (currentTab2 === 1) {
+        continueBtn.textContent = 'Continue to Add-ons';
+        // For residential service, require cleaning type selection
+        if (selectedService2 === 'residential') {
+            continueBtn.disabled = !selectedOptions.cleaningType;
+        } else if (selectedService2 === 'office') {
+            continueBtn.disabled = !selectedOptions.officeSize;
+        } else if (selectedService2 === 'post-construction') {
+            continueBtn.disabled = !selectedOptions.constructionType;
+        } else {
+            continueBtn.disabled = false;
+        }
+    } else if (currentTab2 === 2) {
+        continueBtn.textContent = 'Continue to Details';
+        continueBtn.disabled = false;
+    } else if (currentTab2 === 3) {
+        continueBtn.textContent = 'Submit Booking';
+        
+        // Check if required fields are filled
+        const fullName = document.getElementById('full-name')?.value || '';
+        const email = document.getElementById('email')?.value || '';
+        const phone = document.getElementById('phone')?.value || '';
+        const preferredDate = document.getElementById('preferred-booking-date')?.value || '';
+        const preferredTime = document.getElementById('preferred-time')?.value || '';
+        const address = document.getElementById('address')?.value || '';
+        
+        continueBtn.disabled = !fullName || !email || !phone || !preferredDate || !preferredTime || !address;
+    }
+}
 
 
 async function submitBooking() {
