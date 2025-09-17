@@ -693,7 +693,6 @@ async function submitBooking() {
     continueBtn.disabled = true;
 
     try {
-
         // Get form field values using the correct selectors
         const fullNameInput = document.getElementById('full-name') || document.querySelector('input[placeholder="Enter your full name"]');
         const emailInput = document.getElementById('email') || document.querySelector('input[placeholder="Enter your email address"]');
@@ -701,11 +700,10 @@ async function submitBooking() {
         const dateInput = document.getElementById('preferred-booking-date') || document.querySelector('input[type="date"]');
         const timeInput = document.getElementById('preferred-time') || document.querySelector('input[type="time"]');
         const addressInput = document.getElementById('address') || document.querySelector('textarea[placeholder="Enter your complete address"]');
-        const specialInstructionsInput = document.querySelector('textarea[placeholder="Any specific requirements or notes"]');
+        const specialInstructionsInput = document.getElementById('special-instructions') || document.querySelector('textarea[placeholder="Any specific requirements or notes"]');
         const bookingTypeInput = document.querySelector('input[name="booking-type"]:checked');
 
-
-        // Collect all form data
+        // Collect all form data with correct structure
         const bookingData = {
             name: fullNameInput?.value || '',
             email: emailInput?.value || '',
@@ -714,22 +712,16 @@ async function submitBooking() {
             time: timeInput?.value || '',
             bookingType: bookingTypeInput?.value || '',
             address: addressInput?.value || '',
-            additionalInfo: specialInstructionsInput?.value || '',
-            // Add service details for reference
-            serviceDetails: {
-                service: selectedService2,
-                options: selectedOptions,
-                addons: selectedOptions.addons,
-                totalPrice: calculatePrice()
-            }
+            additionalInfo: specialInstructionsInput?.value || ''
         };
 
-        // Validate required fields
-        const { customerInfo } = bookingData;
-        if (!customerInfo.fullName || !customerInfo.email || !customerInfo.phone || 
-            !customerInfo.preferredDate || !customerInfo.preferredTime || !customerInfo.address) {
+        // Client-side validation of required fields
+        if (!bookingData.name || !bookingData.email || !bookingData.phone || 
+            !bookingData.date || !bookingData.time || !bookingData.address) {
             throw new Error('Please fill in all required fields');
         }
+
+        console.log('Sending booking data:', bookingData);
 
         // Send booking data to Netlify function
         const response = await fetch('/.netlify/functions/send-booking-email', {
@@ -742,7 +734,7 @@ async function submitBooking() {
 
         const result = await response.json();
 
-        if (response.ok) {
+        if (response.ok && result.success) {
             // Success
             showSuccessMessage();
             console.log('Booking submitted successfully:', result);
