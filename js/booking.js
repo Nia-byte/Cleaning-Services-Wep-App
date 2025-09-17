@@ -775,6 +775,14 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+const radioButtons = document.querySelectorAll('input[name="booking-type"]');
+        
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', function() {
+                console.log('Selected booking type:', this.value);
+            });
+        });
+
 // Assessment checkbox logic (only one can be selected)
 const virtualAssessment = document.getElementById('virtual-assessment');
 const onsiteAssessment = document.getElementById('onsite-assessment');
