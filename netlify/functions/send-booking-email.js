@@ -136,12 +136,9 @@ exports.handler = async (event, context) => {
             phone, 
             date, 
             time, 
-            location, 
-            businessName, 
-            message, 
+            bookingType,
+            address,
             additionalInfo, 
-            referralSource,
-            referralPerson 
         } = requestBody;
 
         // Validate required fields
@@ -175,12 +172,9 @@ exports.handler = async (event, context) => {
       Phone: ${phone || 'Not provided'}
       Date: ${date}
       Time: ${time}
-      Location: ${location || 'Not specified'}
-      Business Name: ${businessName || 'Not provided'}
-      Overview Message: ${message || 'No additional message'}
+      Booking Type: ${bookingType}
+      Address: ${address || 'Not specified'}
       Additional Information: ${additionalInfo || 'No additional information'}
-      Referral Source: ${referralSource || 'Not specified'}
-      Referred by: ${referralPerson || 'Not specified'}
     `;
 
         console.log('Processing booking for:', email);
@@ -190,12 +184,12 @@ exports.handler = async (event, context) => {
             to: email,
             from: {
                 email: process.env.ADMIN_EMAIL,
-                name: 'Velvet & Edge Solutions'
+                name: 'NiaImani Cleaning Services'
             },
-            subject: 'Velvet & Edge Solutions - Consultation Booking Confirmation',
+            subject: 'Booking Confirmation - NiaImani Group',
             text: `Dear ${name},
 
-Thank you for booking a consultation with Velvet & Edge Solutions!
+Thank you for booking a consultation with NiaImani Cleaning Services!
 
 Your booking details:
 ${bookingDetails}
@@ -205,27 +199,28 @@ We will contact you shortly to confirm your appointment and provide the meeting 
 If you have any questions before our meeting, please don't hesitate to reach out.
 
 Best regards,
-Velvet & Edge Solutions Team`,
+NiaImani Cleaning Services Team`,
             html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: #dc4c94; margin-bottom: 10px;">Velvet & Edge Solutions</h1>
+            <h1 style="color: #4285F4; margin-bottom: 10px;">NiaImani Cleaning Services</h1>
             <h2 style="color: #333; font-weight: normal;">Consultation Booking Confirmation</h2>
           </div>
           
           <p style="font-size: 16px; color: #333;">Dear ${name},</p>
-          <p style="font-size: 16px; color: #333;">Thank you for booking a consultation with Velvet & Edge Solutions!</p>
+          <p style="font-size: 16px; color: #333;">Thank you for booking a consultation with NiaImani Cleaning Services!</p>
           
           <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3 style="color: #dc4c94; margin-top: 0;">Your booking details:</h3>
+            <h3 style="color: #4285F4; margin-top: 0;">Your booking details:</h3>
             <table style="width: 100%; border-collapse: collapse;">
               <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Name:</td><td style="padding: 8px 0; color: #333;">${name}</td></tr>
               <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Email:</td><td style="padding: 8px 0; color: #333;">${email}</td></tr>
               <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Phone:</td><td style="padding: 8px 0; color: #333;">${phone || 'Not provided'}</td></tr>
               <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Date:</td><td style="padding: 8px 0; color: #333;">${date}</td></tr>
-              <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Time:</td><td style="padding: 8px 0; color: #333;">${time}</td></tr>
-              <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Platform:</td><td style="padding: 8px 0; color: #333;">${location || 'Not specified'}</td></tr>
-              ${businessName ? `<tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Business Name:</td><td style="padding: 8px 0; color: #333;">${businessName}</td></tr>` : ''}
+              <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Booking Type:</td><td style="padding: 8px 0; color: #333;">${bookingType}</td></tr>
+               <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Time:</td><td style="padding: 8px 0; color: #333;">${time}</td></tr>
+              <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Address:</td><td style="padding: 8px 0; color: #333;">${address || 'Not specified'}</td></tr>
+              ${additionalInfo ? `<tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Additional Information:</td><td style="padding: 8px 0; color: #333;">${additionalInfo}</td></tr>` : ''}
             </table>
           </div>
           
@@ -233,7 +228,7 @@ Velvet & Edge Solutions Team`,
           <p style="font-size: 16px; color: #333;">If you have any questions before our meeting, please don't hesitate to reach out.</p>
           
           <div style="margin-top: 30px; text-align: center; border-top: 1px solid #eee; padding-top: 20px;">
-            <p style="color: #666; font-size: 14px;">Best regards,<br><strong>Velvet & Edge Solutions Team</strong></p>
+            <p style="color: #666; font-size: 14px;">Best regards,<br><strong>NiaImani Cleaning Services</strong></p>
           </div>
         </div>
       `
@@ -244,7 +239,7 @@ Velvet & Edge Solutions Team`,
             to: process.env.ADMIN_EMAIL,
             from: {
                 email: process.env.ADMIN_EMAIL,
-                name: 'Velvet & Edge Website'
+                name: 'NiaImani Cleaning Services'
             },
             subject: `New Consultation Booking - ${name}`,
             text: `New consultation booking received!
@@ -255,42 +250,34 @@ ${bookingDetails}
 Please follow up with the client to confirm the appointment and send meeting details.`,
             html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="background-color: #dc4c94; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
+          <div style="background-color: #4285F4; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
             <h2 style="margin: 0;">New Consultation Booking</h2>
           </div>
           
           <div style="background-color: #f8f9fa; padding: 20px; border-radius: 0 0 8px 8px;">
             <p style="font-size: 16px; color: #333; margin-top: 0;"><strong>A new consultation booking has been received!</strong></p>
             
-            <h3 style="color: #dc4c94;">Client Details:</h3>
+            <h3 style="color: #4285F4;">Client Details:</h3>
             <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 4px;">
               <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Name:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${name}</td></tr>
               <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Email:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;"><a href="mailto:${email}" style="color: #dc4c94;">${email}</a></td></tr>
               <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Phone:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${phone || 'Not provided'}</td></tr>
               <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Date:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${date}</td></tr>
-              <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Time:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${time}</td></tr>
-              <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Location:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${location || 'Not specified'}</td></tr>
-              ${businessName ? `<tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Business Name:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${businessName}</td></tr>` : ''}
-              <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Referral Source:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${referralSource || 'Not specified'}</td></tr>
-              ${referralPerson ? `<tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Referred by:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${referralPerson || 'Not specified'}</td></tr>` : ''}
+              <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Booking Type:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${bookingType}</td></tr>
+             <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Time:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${time}</td></tr>
+              <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Location:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${address || 'Not specified'}</td></tr>
             </table>
             
-            ${message ? `
-            <h3 style="color: #dc4c94; margin-top: 25px;">Shared Overview Regarding Support Needed:</h3>
-            <div style="background: white; padding: 15px; border-radius: 4px; color: #333;">
-              ${message.replace(/\n/g, '<br>')}
-            </div>
-            ` : ''}
             
             ${additionalInfo ? `
-            <h3 style="color: #dc4c94; margin-top: 25px;">Additional Information To Help Prepare for meeting:</h3>
+            <h3 style="color: #4285F4; margin-top: 25px;">Additional Information To Help Prepare for Service:</h3>
             <div style="background: white; padding: 15px; border-radius: 4px; color: #333;">
               ${additionalInfo.replace(/\n/g, '<br>')}
             </div>
             ` : ''}
             
             <div style="margin-top: 25px; padding: 15px; background: #fff3cd; border-radius: 4px; border-left: 4px solid #ffc107;">
-              <p style="margin: 0; color: #856404;"><strong>Action Required:</strong> Please follow up with the client to confirm the appointment and send meeting details.</p>
+              <p style="margin: 0; color: #856404;"><strong>Action Required:</strong> Please follow up with the client to confirm the appointment and send service details.</p>
             </div>
           </div>
         </div>

@@ -693,21 +693,34 @@ async function submitBooking() {
     continueBtn.disabled = true;
 
     try {
+
+        // Get form field values using the correct selectors
+        const fullNameInput = document.getElementById('full-name') || document.querySelector('input[placeholder="Enter your full name"]');
+        const emailInput = document.getElementById('email') || document.querySelector('input[placeholder="Enter your email address"]');
+        const phoneInput = document.getElementById('phone') || document.querySelector('input[placeholder="Enter your phone number"]');
+        const dateInput = document.getElementById('preferred-booking-date') || document.querySelector('input[type="date"]');
+        const timeInput = document.getElementById('preferred-time') || document.querySelector('input[type="time"]');
+        const addressInput = document.getElementById('address') || document.querySelector('textarea[placeholder="Enter your complete address"]');
+        const specialInstructionsInput = document.querySelector('textarea[placeholder="Any specific requirements or notes"]');
+        const bookingTypeInput = document.querySelector('input[name="booking-type"]:checked');
+
+
         // Collect all form data
         const bookingData = {
-            service: selectedService2,
-            options: selectedOptions,
-            addons: selectedOptions.addons,
-            totalPrice: calculatePrice(),
-            customerInfo: {
-                fullName: document.querySelector('input[placeholder="Enter your full name"]').value,
-                email: document.querySelector('input[placeholder="Enter your email address"]').value,
-                phone: document.querySelector('input[placeholder="Enter your phone number"]').value,
-                bookingType: document.querySelector('input[name="booking-type"]:checked')?.value || 'personal',
-                preferredDate: document.querySelector('input[type="date"]').value,
-                preferredTime: document.querySelector('input[type="time"]').value,
-                address: document.querySelector('textarea[placeholder="Enter your complete address"]').value,
-                specialInstructions: document.querySelector('textarea[placeholder="Any specific requirements or notes"]')?.value || ''
+            name: fullNameInput?.value || '',
+            email: emailInput?.value || '',
+            phone: phoneInput?.value || '',
+            date: dateInput?.value || '',
+            time: timeInput?.value || '',
+            bookingType: bookingTypeInput?.value || '',
+            address: addressInput?.value || '',
+            additionalInfo: specialInstructionsInput?.value || '',
+            // Add service details for reference
+            serviceDetails: {
+                service: selectedService2,
+                options: selectedOptions,
+                addons: selectedOptions.addons,
+                totalPrice: calculatePrice()
             }
         };
 
@@ -795,7 +808,7 @@ function showErrorMessage(errorMessage) {
         ">
             <h3>Booking Submission Failed</h3>
             <p>We're sorry, but there was an error submitting your booking: ${errorMessage}</p>
-            <p>Please try again or contact us directly at info@niaimanigroup.com</p>
+            <p>Please try again or contact us directly at info@niaimanigroup.co.za</p>
         </div>
     `;
     
