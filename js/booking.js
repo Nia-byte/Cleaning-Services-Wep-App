@@ -759,18 +759,27 @@ async function submitBooking() {
 
 
         // Collect booking data
-        const bookingData = {
-            name: fullName,
-            email: email,
-            phone: phone,
-            date: date,
-            time: time,
-            bookingType: bookingType,
-            address: address,
-            additionalInfo: specialInstructions,
-            serviceDetails: getServiceSummary(),
-            totalPrice: calculatePrice()
-        };
+       const bookingData = {
+    name: fullName,
+    email: email,
+    phone: phone,
+    date: date,
+    time: time,
+    bookingType: bookingType,
+    address: address,
+    additionalInfo: specialInstructions,
+    // Add these service details:
+    serviceType: selectedService2,
+    cleaningType: selectedOptions.cleaningType,
+    beds: selectedOptions.beds,
+    baths: selectedOptions.baths,
+    frequency: selectedOptions.frequency,
+    recurringFrequency: selectedOptions.recurringFrequency,
+    officeSize: selectedOptions.officeSize,
+    constructionType: selectedOptions.constructionType,
+    squareMeters: selectedOptions.squareMeters,
+    totalPrice: calculatePrice()
+};
 
         // Submit to Netlify function
         const response = await fetch('/.netlify/functions/send-booking-email', {
