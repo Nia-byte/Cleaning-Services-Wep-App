@@ -117,22 +117,22 @@ function isCurrentTabComplete() {
             } else if (selectedService2 === 'post-construction') {
                 return selectedOptions.constructionType !== '';
             } else if (selectedService2 === 'green') {
-                return true; // Green cleaning doesn't need additional selection beyond beds/baths
+                return true;
             }
             return false;
             
-        case 2: // Add-ons tab
-            return true; // Add-ons are optional
-            
-        case 3: // Details tab
+        case 2: // Your Information tab
             const fullName = document.getElementById('full-name')?.value || '';
             const email = document.getElementById('email')?.value || '';
             const phone = document.getElementById('phone')?.value || '';
-            const preferredDate = document.getElementById('preferred-booking-date')?.value || '';
-            const preferredTime = document.getElementById('preferred-time')?.value || '';
+            const date = document.getElementById('preferred-booking-date')?.value || '';
+            const time = document.getElementById('preferred-time')?.value || '';
             const address = document.getElementById('address')?.value || '';
             
-            return fullName && email && phone && preferredDate && preferredTime && address;
+            return fullName && email && phone && date && time && address;
+            
+        case 3: // Confirmation tab
+            return true;
             
         default:
             return false;
@@ -316,11 +316,11 @@ function switchTab(tabIndex) {
 
 
 function nextTab() {
-    if (currentTab2 < 3 && isCurrentTabComplete()) {
-        switchTab(currentTab2 + 1);
-    } else if (currentTab2 === 3 && isCurrentTabComplete()) {
-        // Submit form
+    if (currentTab2 === 2 && isCurrentTabComplete()) {
         submitBooking();
+    } else if (currentTab2 < 2 && isCurrentTabComplete()) {
+        // Normal tab progression for tabs 0 and 1
+        switchTab(currentTab2 + 1);
     }
 }
 
@@ -687,42 +687,50 @@ function updateContinueButton() {
 async function submitBooking() {
     // Show loading state
     const continueBtn = document.getElementById('continue-btn');
+     // Show loading state
     const originalText = continueBtn.textContent;
-    continueBtn.textContent = 'Submitting...';
+    continueBtn.innerHTML = '<span class="loading-spinner"></span>Submitting...';
     continueBtn.disabled = true;
-
+    
+    // Switch to confirmation tab first
+    switchTab(3);
+    
+    // Show loading in confirmation tab
+    const confirmationTab = document.querySelector('.tab-content:nth-child(4)');
+    confirmationTab.innerHTML = `
+        <div class="booking-confirmation">
+            <div class="loading-spinner" style="width: 40px; height: 40px; border-width: 4px; margin: 20px auto;"></div>
+            <h2>Processing your booking...</h2>
+            <p>Please wait while we submit your booking request.</p>
+        </div>
+    `;
+    
     try {
-        // Get form field values using the correct selectors
-        const fullNameInput = document.getElementById('full-name') || document.querySelector('input[placeholder="Enter your full name"]');
-        const emailInput = document.getElementById('email') || document.querySelector('input[placeholder="Enter your email address"]');
-        const phoneInput = document.getElementById('phone') || document.querySelector('input[placeholder="Enter your phone number"]');
-        const dateInput = document.getElementById('preferred-booking-date') || document.querySelector('input[type="date"]');
-        const timeInput = document.getElementById('preferred-time') || document.querySelector('input[type="time"]');
-        const addressInput = document.getElementById('address') || document.querySelector('textarea[placeholder="Enter your complete address"]');
-        const specialInstructionsInput = document.getElementById('special-instructions') || document.querySelector('textarea[placeholder="Any specific requirements or notes"]');
-        const bookingTypeInput = document.querySelector('input[name="booking-type"]:checked');
+        // Get form field values
+        const fullName = document.getElementById('full-name')?.value || '';
+        const email = document.getElementById('email')?.value || '';
+        const phone = document.getElementById('phone')?.value || '';
+        const date = document.getElementById('preferred-booking-date')?.value || '';
+        const time = document.getElementById('preferred-time')?.value || '';
+        const address = document.getElementById('address')?.value || '';
+        const specialInstructions = document.getElementById('special-instructions')?.value || '';
+        const bookingType = document.querySelector('input[name="booking-type"]:checked')?.value || 'Personal';
 
-        // Collect all form data with correct structure
+        // Collect booking data
         const bookingData = {
-            name: fullNameInput?.value || '',
-            email: emailInput?.value || '',
-            phone: phoneInput?.value || '',
-            date: dateInput?.value || '',
-            time: timeInput?.value || '',
-            bookingType: bookingTypeInput?.value || 'Personal',
-            address: addressInput?.value || '',
-            additionalInfo: specialInstructionsInput?.value || ''
+            name: fullName,
+            email: email,
+            phone: phone,
+            date: date,
+            time: time,
+            bookingType: bookingType,
+            address: address,
+            additionalInfo: specialInstructions,
+            serviceDetails: getServiceSummary(),
+            totalPrice: calculatePrice()
         };
 
-        // Client-side validation of required fields
-        if (!bookingData.name || !bookingData.email || !bookingData.phone || 
-            !bookingData.date || !bookingData.time || !bookingData.address) {
-            throw new Error('Please fill in all required fields');
-        }
-
-        console.log('Sending booking data:', bookingData);
-
-        // Send booking data to Netlify function
+        // Submit to Netlify function
         const response = await fetch('/.netlify/functions/send-booking-email', {
             method: 'POST',
             headers: {
@@ -734,170 +742,99 @@ async function submitBooking() {
         const result = await response.json();
 
         if (response.ok && result.success) {
-            // SUCCESS: Show success message in current tab (tab 3 = "Booking Details" in UI)
-            console.log('Booking submitted successfully:', result);
-            showSuccessMessage();
-            
-            // Optionally scroll to top to ensure success message is visible
-            const rightSection = document.querySelector('.right-section');
-            if (rightSection) {
-                rightSection.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-            
+            // Show success confirmation
+            showSuccessConfirmation(bookingData);
         } else {
-            // ERROR from function
-            throw new Error(result.error || 'Failed to submit booking');
+            // Show error
+            showErrorConfirmation(result.error || 'Failed to submit booking');
         }
 
     } catch (error) {
         console.error('Error submitting booking:', error);
-        showErrorMessage(error.message);
-        
-        // Restore button state on error
-        continueBtn.textContent = originalText;
-        continueBtn.disabled = false;
+        showErrorConfirmation(error.message);
     }
-    
-    // Note: Don't restore button state on success - let showSuccessMessage handle it
 }
 
-// ENHANCED: showSuccessMessage function (shows in current tab - tab 3)
-function showSuccessMessage() {
-    // Get booking details from form
-    const fullName = document.getElementById('full-name')?.value || '';
-    const email = document.getElementById('email')?.value || '';
-    const phone = document.getElementById('phone')?.value || '';
-    const date = document.getElementById('preferred-booking-date')?.value || '';
-    const time = document.getElementById('preferred-time')?.value || '';
-    const address = document.getElementById('address')?.value || '';
-    const bookingType = document.querySelector('input[name="booking-type"]:checked')?.value || 'Personal';
-    const specialInstructions = document.getElementById('special-instructions')?.value || '';
 
-    // Format the date for better display
-    const formattedDate = new Date(date).toLocaleDateString('en-US', {
+// ENHANCED: showSuccessMessage function (shows in current tab - tab 3)
+function showSuccessConfirmation(bookingData) {
+    const confirmationTab = document.querySelector('.tab-content:nth-child(4)');
+    
+    // Format the date and time for display
+    const formattedDate = new Date(bookingData.date).toLocaleDateString('en-US', {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
         day: 'numeric'
     });
-
-    // Format time for better display
-    const formattedTime = new Date(`1970-01-01T${time}`).toLocaleTimeString('en-US', {
+    
+    const formattedTime = new Date(`1970-01-01T${bookingData.time}`).toLocaleTimeString('en-US', {
         hour: 'numeric',
         minute: '2-digit',
         hour12: true
     });
-
-    // Get service details
-    const serviceDetails = getServiceSummary();
-    const totalPrice = calculatePrice();
-
-    // Create detailed success message
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'booking-message success-message';
-    messageDiv.innerHTML = `
-        <div style="
-            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-            border: 2px solid #28a745;
-            color: #155724;
-            padding: 25px;
-            border-radius: 12px;
-            margin: 20px 0;
-            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
-        ">
-            <div style="text-align: center; margin-bottom: 25px;">
-                <div style="font-size: 48px; margin-bottom: 10px;">✅</div>
-                <h2 style="margin: 0; color: #155724; font-size: 24px;">Booking Confirmed!</h2>
-                <p style="margin: 5px 0 0 0; font-size: 16px; opacity: 0.8;">Thank you for choosing NiaImani Group Cleaning Services</p>
+    
+    confirmationTab.innerHTML = `
+        <div class="booking-confirmation">
+            <div class="confirmation-icon">✅</div>
+            <h2 class="confirmation-title">Booking Confirmed!</h2>
+            <p>Thank you for choosing NiaImani Group Cleaning Services</p>
+            
+            <div class="confirmation-details">
+                <div class="detail-row">
+                    <span class="detail-label">Service Type:</span>
+                    <span class="detail-value">${bookingData.serviceDetails.serviceType}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Name:</span>
+                    <span class="detail-value">${bookingData.name}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value">${bookingData.email}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Phone:</span>
+                    <span class="detail-value">${bookingData.phone}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Date:</span>
+                    <span class="detail-value">${formattedDate}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Time:</span>
+                    <span class="detail-value">${formattedTime}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Booking Type:</span>
+                    <span class="detail-value">${bookingData.bookingType}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Estimated Price:</span>
+                    <span class="detail-value" style="font-weight: bold; color: #667eea;">R${bookingData.totalPrice} ZAR</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Address:</span>
+                    <span class="detail-value">${bookingData.address}</span>
+                </div>
+                ${bookingData.additionalInfo ? `
+                <div class="detail-row">
+                    <span class="detail-label">Special Instructions:</span>
+                    <span class="detail-value">${bookingData.additionalInfo}</span>
+                </div>
+                ` : ''}
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
-                <div style="background: rgba(255,255,255,0.7); padding: 20px; border-radius: 8px;">
-                    <h3 style="margin-top: 0; color: #155724; font-size: 18px; border-bottom: 2px solid #28a745; padding-bottom: 8px;">Service Details</h3>
-                    <div style="line-height: 1.6;">
-                        <strong>Service Type:</strong> ${serviceDetails.serviceType}<br>
-                        ${serviceDetails.details}<br>
-                        <strong>Estimated Price:</strong> <span style="font-size: 18px; font-weight: bold; color: #28a745;">R${totalPrice} ZAR</span>
-                    </div>
-                </div>
-                
-                <div style="background: rgba(255,255,255,0.7); padding: 20px; border-radius: 8px;">
-                    <h3 style="margin-top: 0; color: #155724; font-size: 18px; border-bottom: 2px solid #28a745; padding-bottom: 8px;">Appointment Details</h3>
-                    <div style="line-height: 1.6;">
-                        <strong>Date:</strong> ${formattedDate}<br>
-                        <strong>Time:</strong> ${formattedTime}<br>
-                        <strong>Type:</strong> ${bookingType} Booking<br>
-                        <strong>Location:</strong> ${address.substring(0, 50)}${address.length > 50 ? '...' : ''}
-                    </div>
-                </div>
-            </div>
-            
-            <div style="background: rgba(255,255,255,0.7); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <h3 style="margin-top: 0; color: #155724; font-size: 18px; border-bottom: 2px solid #28a745; padding-bottom: 8px;">Contact Information</h3>
-                <div style="line-height: 1.6;">
-                    <strong>Name:</strong> ${fullName}<br>
-                    <strong>Email:</strong> ${email}<br>
-                    <strong>Phone:</strong> ${phone}
-                </div>
-            </div>
-            
-            ${specialInstructions ? `
-            <div style="background: rgba(255,255,255,0.7); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <h3 style="margin-top: 0; color: #155724; font-size: 18px; border-bottom: 2px solid #28a745; padding-bottom: 8px;">Special Instructions</h3>
-                <div style="line-height: 1.6; font-style: italic;">
-                    "${specialInstructions}"
-                </div>
-            </div>
-            ` : ''}
-            
-            <div style="text-align: center; padding: 20px; background: rgba(40, 167, 69, 0.1); border-radius: 8px; border: 1px dashed #28a745;">
-                <h3 style="margin-top: 0; color: #155724;">What happens next?</h3>
-                <p style="margin: 10px 0; line-height: 1.6;">
-                    📧 <strong>Confirmation email sent</strong> - Check your inbox<br>
-                    📞 <strong>We'll call you within 24 hours</strong> to confirm details<br>
-                    📋 <strong>Final quote will be provided</strong> after consultation<br>
-                    🧽 <strong>Enjoy your sparkling clean space!</strong>
-                </p>
-                
-                <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.8); border-radius: 6px;">
-                    <p style="margin: 0; font-size: 14px; color: #666;">
-                        <strong>Need to make changes?</strong> Contact us at <a href="mailto:info@niaimanigroup.co.za" style="color: #28a745;">info@niaimanigroup.co.za</a>
-                    </p>
-                </div>
+            <div class="note">
+                <h3>What happens next?</h3>
+                <p>📧 <strong>Confirmation email sent</strong> - Check your inbox<br>
+                📞 <strong>We'll call you within 24 hours</strong> to confirm details<br>
+                📋 <strong>Final quote will be provided</strong> after consultation<br>
+                🧽 <strong>Enjoy your sparkling clean space!</strong></p>
             </div>
         </div>
     `;
-    
-    // Remove any existing messages
-    const existingMessages = document.querySelectorAll('.booking-message');
-    existingMessages.forEach(msg => msg.remove());
-    
-    // Get the current active tab content (should be tab 3 - "Booking Details")
-    const activeTabContent = document.querySelector('.tab-content.active');
-    if (activeTabContent) {
-        activeTabContent.insertBefore(messageDiv, activeTabContent.firstChild);
-    }
-    
-    // Hide the continue button after successful submission
-    const continueBtn = document.getElementById('continue-btn');
-    if (continueBtn) {
-        continueBtn.style.display = 'none';
-    }
-    
-    // Hide the bottom section (price and continue button area)
-    const bottomSection = document.querySelector('.bottom-section');
-    if (bottomSection) {
-        bottomSection.style.display = 'none';
-    }
-    
-    // Optionally dim the form fields to focus attention on the success message
-    const formGroups = activeTabContent.querySelectorAll('.form-group');
-    formGroups.forEach(group => {
-        group.style.opacity = '0.6';
-        group.style.pointerEvents = 'none';
-    });
 }
-
 
 // Helper function to get service summary details
 function getServiceSummary() {
@@ -947,32 +884,21 @@ function getServiceSummary() {
 }
 
 
-function showErrorMessage(errorMessage) {
-    // Create and show error message
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'booking-message error-message';
-    messageDiv.innerHTML = `
-        <div style="
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-            text-align: center;
-        ">
-            <h3>Booking Submission Failed</h3>
-            <p>We're sorry, but there was an error submitting your booking: ${errorMessage}</p>
-            <p>Please try again or contact us directly at info@niaimanigroup.co.za</p>
+function showErrorConfirmation(errorMessage) {
+    const confirmationTab = document.querySelector('.tab-content:nth-child(4)');
+    
+    confirmationTab.innerHTML = `
+        <div class="booking-confirmation">
+            <div class="confirmation-icon">❌</div>
+            <h2 class="confirmation-title">Booking Failed</h2>
+            <div class="error-message">
+                <h3>We're sorry, but there was an error submitting your booking</h3>
+                <p><strong>Error:</strong> ${errorMessage}</p>
+                <p>Please try again or contact us directly at info@niaimanigroup.co.za</p>
+                <button onclick="switchTab(2)" class="next-button">Go Back and Try Again</button>
+            </div>
         </div>
     `;
-    
-    // Insert the message at the top of the form
-    const contentArea = document.querySelector('.content-area');
-    contentArea.insertBefore(messageDiv, contentArea.firstChild);
-    
-    // Scroll to top to show the message
-    contentArea.scrollTop = 0;
 }
 
 // Optional: Function to reset the form after successful submission
