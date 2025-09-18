@@ -782,6 +782,8 @@ async function submitBooking() {
             totalPrice: calculatePrice()
         };
 
+        
+
         // Submit to Netlify function
         const response = await fetch('/.netlify/functions/send-booking-email', {
             method: 'POST',
