@@ -648,14 +648,15 @@ function updatePrice() {
     
    
 }
+
 function updateContinueButton() {
     const continueBtn = document.getElementById('continue-btn');
     
     if (currentTab2 === 0) {
-        continueBtn.textContent = 'Continue to Next Step';
+        continueBtn.textContent = 'Continue to Options';
         continueBtn.disabled = !selectedService2;
     } else if (currentTab2 === 1) {
-        continueBtn.textContent = 'Continue to Add-ons';
+        continueBtn.textContent = 'Continue to Your Information';
         // For residential service, require cleaning type selection
         if (selectedService2 === 'residential') {
             continueBtn.disabled = !selectedOptions.cleaningType;
@@ -667,22 +668,21 @@ function updateContinueButton() {
             continueBtn.disabled = false;
         }
     } else if (currentTab2 === 2) {
-        continueBtn.textContent = 'Continue to Details';
-        continueBtn.disabled = false;
-    } else if (currentTab2 === 3) {
-        continueBtn.textContent = 'Submit Booking';
+        continueBtn.textContent = 'Continue to Booking Details';
         
-        // Check if required fields are filled
+        // Check if required fields are filled for the "Your Information" tab
         const fullName = document.getElementById('full-name')?.value || '';
         const email = document.getElementById('email')?.value || '';
         const phone = document.getElementById('phone')?.value || '';
-        const preferredDate = document.getElementById('preferred-booking-date')?.value || '';
-        const preferredTime = document.getElementById('preferred-time')?.value || '';
-        const address = document.getElementById('address')?.value || '';
         
-        continueBtn.disabled = !fullName || !email || !phone || !preferredDate || !preferredTime || !address;
+        continueBtn.disabled = !fullName || !email || !phone;
+    } else if (currentTab2 === 3) {
+        // Tab 3 is the confirmation tab - hide the button initially
+        // It will be shown/hidden by the submission process
+        continueBtn.style.display = 'none';
     }
 }
+
 
 
 async function submitBooking() {
@@ -756,33 +756,194 @@ async function submitBooking() {
     }
 }
 
-// Add these helper functions for user feedback
+// Enhanced showSuccessMessage function with service details
 function showSuccessMessage() {
-    // Create and show success message
+    // Get booking details from form
+    const fullName = document.getElementById('full-name')?.value || '';
+    const email = document.getElementById('email')?.value || '';
+    const phone = document.getElementById('phone')?.value || '';
+    const date = document.getElementById('preferred-booking-date')?.value || '';
+    const time = document.getElementById('preferred-time')?.value || '';
+    const address = document.getElementById('address')?.value || '';
+    const bookingType = document.querySelector('input[name="booking-type"]:checked')?.value || 'Personal';
+    const specialInstructions = document.getElementById('special-instructions')?.value || '';
+
+    // Format the date for better display
+    const formattedDate = new Date(date).toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+
+    // Format time for better display
+    const formattedTime = new Date(`1970-01-01T${time}`).toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+    });
+
+    // Get service details
+    const serviceDetails = getServiceSummary();
+    const totalPrice = calculatePrice();
+
+    // Create detailed success message
     const messageDiv = document.createElement('div');
     messageDiv.className = 'booking-message success-message';
     messageDiv.innerHTML = `
         <div style="
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 2px solid #28a745;
             color: #155724;
-            padding: 15px;
-            border-radius: 5px;
+            padding: 25px;
+            border-radius: 12px;
             margin: 20px 0;
-            text-align: center;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
         ">
-            <h3>Booking Submitted Successfully!</h3>
-            <p>Thank you for choosing Niaimani Group Cleaning Services. We've sent you a confirmation email and will contact you within 24 hours to confirm your booking details.</p>
+            <div style="text-align: center; margin-bottom: 25px;">
+                <div style="font-size: 48px; margin-bottom: 10px;">✅</div>
+                <h2 style="margin: 0; color: #155724; font-size: 24px;">Booking Confirmed!</h2>
+                <p style="margin: 5px 0 0 0; font-size: 16px; opacity: 0.8;">Thank you for choosing NiaImani Group Cleaning Services</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+                <div style="background: rgba(255,255,255,0.7); padding: 20px; border-radius: 8px;">
+                    <h3 style="margin-top: 0; color: #155724; font-size: 18px; border-bottom: 2px solid #28a745; padding-bottom: 8px;">Service Details</h3>
+                    <div style="line-height: 1.6;">
+                        <strong>Service Type:</strong> ${serviceDetails.serviceType}<br>
+                        ${serviceDetails.details}<br>
+                        <strong>Estimated Price:</strong> <span style="font-size: 18px; font-weight: bold; color: #28a745;">R${totalPrice} ZAR</span>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.7); padding: 20px; border-radius: 8px;">
+                    <h3 style="margin-top: 0; color: #155724; font-size: 18px; border-bottom: 2px solid #28a745; padding-bottom: 8px;">Appointment Details</h3>
+                    <div style="line-height: 1.6;">
+                        <strong>Date:</strong> ${formattedDate}<br>
+                        <strong>Time:</strong> ${formattedTime}<br>
+                        <strong>Type:</strong> ${bookingType} Booking<br>
+                        <strong>Location:</strong> ${address.substring(0, 50)}${address.length > 50 ? '...' : ''}
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.7); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="margin-top: 0; color: #155724; font-size: 18px; border-bottom: 2px solid #28a745; padding-bottom: 8px;">Contact Information</h3>
+                <div style="line-height: 1.6;">
+                    <strong>Name:</strong> ${fullName}<br>
+                    <strong>Email:</strong> ${email}<br>
+                    <strong>Phone:</strong> ${phone}
+                </div>
+            </div>
+            
+            ${specialInstructions ? `
+            <div style="background: rgba(255,255,255,0.7); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="margin-top: 0; color: #155724; font-size: 18px; border-bottom: 2px solid #28a745; padding-bottom: 8px;">Special Instructions</h3>
+                <div style="line-height: 1.6; font-style: italic;">
+                    "${specialInstructions}"
+                </div>
+            </div>
+            ` : ''}
+            
+            <div style="text-align: center; padding: 20px; background: rgba(40, 167, 69, 0.1); border-radius: 8px; border: 1px dashed #28a745;">
+                <h3 style="margin-top: 0; color: #155724;">What happens next?</h3>
+                <p style="margin: 10px 0; line-height: 1.6;">
+                    📧 <strong>Confirmation email sent</strong> - Check your inbox<br>
+                    📞 <strong>We'll call you within 24 hours</strong> to confirm details<br>
+                    📋 <strong>Final quote will be provided</strong> after consultation<br>
+                    🧽 <strong>Enjoy your sparkling clean space!</strong>
+                </p>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.8); border-radius: 6px;">
+                    <p style="margin: 0; font-size: 14px; color: #666;">
+                        <strong>Need to make changes?</strong> Contact us at <a href="mailto:info@niaimanigroup.co.za" style="color: #28a745;">info@niaimanigroup.co.za</a>
+                    </p>
+                </div>
+            </div>
         </div>
     `;
     
-    // Insert the message at the top of the form
-    const contentArea = document.querySelector('.content-area');
-    contentArea.insertBefore(messageDiv, contentArea.firstChild);
+    // Remove any existing messages
+    const existingMessages = document.querySelectorAll('.booking-message');
+    existingMessages.forEach(msg => msg.remove());
     
-    // Scroll to top to show the message
-    contentArea.scrollTop = 0;
+    // Insert the message at the top of the current tab content
+    const activeTabContent = document.querySelector('.tab-content.active');
+    if (activeTabContent) {
+        activeTabContent.insertBefore(messageDiv, activeTabContent.firstChild);
+        
+        // Scroll to top to show the message
+        activeTabContent.scrollTop = 0;
+        
+        // Also scroll the main container to top
+        const mainContainer = document.querySelector('.right-section');
+        if (mainContainer) {
+            mainContainer.scrollTop = 0;
+        }
+    }
+    
+    // Hide the continue button after successful submission
+    const continueBtn = document.getElementById('continue-btn');
+    if (continueBtn) {
+        continueBtn.style.display = 'none';
+    }
+    
+    // Optionally hide the form fields to focus attention on the success message
+    const formGroups = document.querySelectorAll('#tab-4 .form-group');
+    formGroups.forEach(group => {
+        group.style.opacity = '0.6';
+        group.style.pointerEvents = 'none';
+    });
 }
+
+
+// Helper function to get service summary details
+function getServiceSummary() {
+    let serviceType = '';
+    let details = '';
+    
+    switch (selectedService2) {
+        case 'residential':
+            serviceType = 'Residential Cleaning';
+            details = `<strong>Cleaning Type:</strong> ${selectedOptions.cleaningType || 'Standard'}<br>
+                      <strong>Bedrooms:</strong> ${selectedOptions.beds}<br>
+                      <strong>Bathrooms:</strong> ${selectedOptions.baths}<br>
+                      <strong>Frequency:</strong> ${selectedOptions.frequency === 'recurring' ? `Recurring (${selectedOptions.recurringFrequency})` : 'Once-off'}`;
+            break;
+            
+        case 'green':
+            serviceType = 'Green Cleaning';
+            details = `<strong>Eco-friendly cleaning service</strong><br>
+                      <strong>Bedrooms:</strong> ${selectedOptions.beds}<br>
+                      <strong>Bathrooms:</strong> ${selectedOptions.baths}<br>
+                      <strong>Frequency:</strong> ${selectedOptions.frequency === 'recurring' ? `Recurring (${selectedOptions.recurringFrequency})` : 'Once-off'}`;
+            break;
+            
+        case 'post-construction':
+            serviceType = 'Post-Construction Cleanup';
+            if (selectedOptions.constructionType === 'square-meter') {
+                details = `<strong>Project Size:</strong> ${selectedOptions.squareMeters} square meters<br>
+                          <strong>Rate:</strong> R25-R50 per square meter`;
+            } else {
+                details = `<strong>Project Size:</strong> ${selectedOptions.constructionType || 'Medium'} job<br>
+                          <strong>Type:</strong> Construction cleanup`;
+            }
+            break;
+            
+        case 'office':
+            serviceType = 'Office/Commercial Cleaning';
+            details = `<strong>Office Size:</strong> ${selectedOptions.officeSize || 'Medium'}<br>
+                      <strong>Frequency:</strong> ${selectedOptions.frequency === 'recurring' ? 'Monthly recurring' : 'Once-off'}`;
+            break;
+            
+        default:
+            serviceType = 'Cleaning Service';
+            details = 'Custom cleaning service';
+    }
+    
+    return { serviceType, details };
+}
+
 
 function showErrorMessage(errorMessage) {
     // Create and show error message
