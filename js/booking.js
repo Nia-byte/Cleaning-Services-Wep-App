@@ -684,7 +684,6 @@ function updateContinueButton() {
 }
 
 
-
 async function submitBooking() {
     // Show loading state
     const continueBtn = document.getElementById('continue-btn');
@@ -710,7 +709,7 @@ async function submitBooking() {
             phone: phoneInput?.value || '',
             date: dateInput?.value || '',
             time: timeInput?.value || '',
-            bookingType: bookingTypeInput?.value || '',
+            bookingType: bookingTypeInput?.value || 'Personal',
             address: addressInput?.value || '',
             additionalInfo: specialInstructionsInput?.value || ''
         };
@@ -735,28 +734,34 @@ async function submitBooking() {
         const result = await response.json();
 
         if (response.ok && result.success) {
-            // Success
-            showSuccessMessage();
+            // SUCCESS: Show success message in current tab (tab 3 = "Booking Details" in UI)
             console.log('Booking submitted successfully:', result);
+            showSuccessMessage();
             
-            // Optionally reset the form or redirect
-            // resetForm();
+            // Optionally scroll to top to ensure success message is visible
+            const rightSection = document.querySelector('.right-section');
+            if (rightSection) {
+                rightSection.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            
         } else {
-            // Error from function
+            // ERROR from function
             throw new Error(result.error || 'Failed to submit booking');
         }
 
     } catch (error) {
         console.error('Error submitting booking:', error);
         showErrorMessage(error.message);
-    } finally {
-        // Restore button state
+        
+        // Restore button state on error
         continueBtn.textContent = originalText;
         continueBtn.disabled = false;
     }
+    
+    // Note: Don't restore button state on success - let showSuccessMessage handle it
 }
 
-// Enhanced showSuccessMessage function with service details
+// ENHANCED: showSuccessMessage function (shows in current tab - tab 3)
 function showSuccessMessage() {
     // Get booking details from form
     const fullName = document.getElementById('full-name')?.value || '';
@@ -867,19 +872,10 @@ function showSuccessMessage() {
     const existingMessages = document.querySelectorAll('.booking-message');
     existingMessages.forEach(msg => msg.remove());
     
-    // Insert the message at the top of the current tab content
+    // Get the current active tab content (should be tab 3 - "Booking Details")
     const activeTabContent = document.querySelector('.tab-content.active');
     if (activeTabContent) {
         activeTabContent.insertBefore(messageDiv, activeTabContent.firstChild);
-        
-        // Scroll to top to show the message
-        activeTabContent.scrollTop = 0;
-        
-        // Also scroll the main container to top
-        const mainContainer = document.querySelector('.right-section');
-        if (mainContainer) {
-            mainContainer.scrollTop = 0;
-        }
     }
     
     // Hide the continue button after successful submission
@@ -888,8 +884,14 @@ function showSuccessMessage() {
         continueBtn.style.display = 'none';
     }
     
-    // Optionally hide the form fields to focus attention on the success message
-    const formGroups = document.querySelectorAll('#tab-4 .form-group');
+    // Hide the bottom section (price and continue button area)
+    const bottomSection = document.querySelector('.bottom-section');
+    if (bottomSection) {
+        bottomSection.style.display = 'none';
+    }
+    
+    // Optionally dim the form fields to focus attention on the success message
+    const formGroups = activeTabContent.querySelectorAll('.form-group');
     formGroups.forEach(group => {
         group.style.opacity = '0.6';
         group.style.pointerEvents = 'none';
