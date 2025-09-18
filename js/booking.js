@@ -827,6 +827,35 @@ function showSuccessConfirmation(bookingData) {
         minute: '2-digit',
         hour12: true
     });
+
+    // Helper function to get service summary
+    function getServiceSummary(data) {
+        let summary = data.serviceType ? data.serviceType.charAt(0).toUpperCase() + data.serviceType.slice(1) : 'Cleaning Service';
+        
+        if (data.cleaningType) {
+            summary += ` (${data.cleaningType})`;
+        }
+        if (data.beds || data.baths) {
+            summary += ` - ${data.beds || 0} bed${(data.beds || 0) !== 1 ? 's' : ''}, ${data.baths || 0} bath${(data.baths || 0) !== 1 ? 's' : ''}`;
+        }
+        if (data.officeSize) {
+            summary += ` (${data.officeSize} office)`;
+        }
+        if (data.constructionType) {
+            if (data.constructionType === 'square-meter' && data.squareMeters) {
+                summary += ` (${data.squareMeters} sq m)`;
+            } else {
+                summary += ` (${data.constructionType})`;
+            }
+        }
+        if (data.frequency === 'recurring' && data.recurringFrequency) {
+            summary += ` - ${data.recurringFrequency} recurring`;
+        } else if (data.frequency === 'once-off') {
+            summary += ' - Once-off';
+        }
+        
+        return summary;
+    }
     
     confirmationTab.innerHTML = `
         <div class="booking-confirmation">
@@ -836,8 +865,8 @@ function showSuccessConfirmation(bookingData) {
             
             <div class="confirmation-details">
                 <div class="detail-row">
-                    <span class="detail-label">Service Type:</span>
-                    <span class="detail-value">${bookingData.serviceDetails.serviceType}</span>
+                    <span class="detail-label">Service:</span>
+                    <span class="detail-value">${getServiceSummary(bookingData)}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Name:</span>
