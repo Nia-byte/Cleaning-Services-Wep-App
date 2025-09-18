@@ -65,6 +65,7 @@ body {
     border-radius: 25px;
     cursor: pointer;
     backdrop-filter: blur(10px);
+    text-decoration: none;
 }
 
 .right-section {

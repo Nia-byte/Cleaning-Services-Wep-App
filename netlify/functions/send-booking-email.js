@@ -189,7 +189,7 @@ exports.handler = async (event, context) => {
             subject: 'Booking Confirmation - NiaImani Group',
             text: `Dear ${name},
 
-Thank you for booking a consultation with NiaImani Cleaning Services!
+Thank you for booking a service with NiaImani Cleaning Services!
 
 Your booking details:
 ${bookingDetails}
@@ -203,12 +203,13 @@ NiaImani Cleaning Services Team`,
             html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="text-align: center; margin-bottom: 30px;">
+            <img src="https://imgur.com/a/gC4W8bX"" alt="NiaImani Cleaning Services Logo" style="max-width: 120px; height: auto; margin-bottom: 15px;">
             <h1 style="color: #4285F4; margin-bottom: 10px;">NiaImani Cleaning Services</h1>
-            <h2 style="color: #333; font-weight: normal;">Consultation Booking Confirmation</h2>
+            <h2 style="color: #333; font-weight: normal;">Booking Confirmation</h2>
           </div>
           
           <p style="font-size: 16px; color: #333;">Dear ${name},</p>
-          <p style="font-size: 16px; color: #333;">Thank you for booking a consultation with NiaImani Cleaning Services!</p>
+          <p style="font-size: 16px; color: #333;">Thank you for booking with NiaImani Cleaning Services!</p>
           
           <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="color: #4285F4; margin-top: 0;">Your booking details:</h3>
@@ -224,8 +225,8 @@ NiaImani Cleaning Services Team`,
             </table>
           </div>
           
-          <p style="font-size: 16px; color: #333;">We will contact you shortly to confirm your appointment and provide the meeting details.</p>
-          <p style="font-size: 16px; color: #333;">If you have any questions before our meeting, please don't hesitate to reach out.</p>
+          <p style="font-size: 16px; color: #333;">We will contact you shortly to confirm your cleaning service and provide the quotation.</p>
+          <p style="font-size: 16px; color: #333;">If you have any questions before our service, please don't hesitate to reach out.</p>
           
           <div style="margin-top: 30px; text-align: center; border-top: 1px solid #eee; padding-top: 20px;">
             <p style="color: #666; font-size: 14px;">Best regards,<br><strong>NiaImani Cleaning Services</strong></p>
@@ -241,21 +242,22 @@ NiaImani Cleaning Services Team`,
                 email: process.env.ADMIN_EMAIL,
                 name: 'NiaImani Cleaning Services'
             },
-            subject: `New Consultation Booking - ${name}`,
-            text: `New consultation booking received!
+            subject: `New Cleaning Booking - ${name}`,
+            text: `New cleaning booking received!
 
 Client details:
 ${bookingDetails}
 
-Please follow up with the client to confirm the appointment and send meeting details.`,
+Please follow up with the client to confirm the service and send quotation.`,
             html: `
+             <img src="https://imgur.com/a/gC4W8bX"" alt="NiaImani Cleaning Services Logo" style="max-width: 120px; height: auto; margin-bottom: 15px;">
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background-color: #4285F4; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
-            <h2 style="margin: 0;">New Consultation Booking</h2>
+            <h2 style="margin: 0;">New Cleaning Servive Booking</h2>
           </div>
           
           <div style="background-color: #f8f9fa; padding: 20px; border-radius: 0 0 8px 8px;">
-            <p style="font-size: 16px; color: #333; margin-top: 0;"><strong>A new consultation booking has been received!</strong></p>
+            <p style="font-size: 16px; color: #333; margin-top: 0;"><strong>A new cleaning service booking has been received!</strong></p>
             
             <h3 style="color: #4285F4;">Client Details:</h3>
             <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 4px;">
