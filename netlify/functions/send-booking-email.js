@@ -220,8 +220,8 @@ NiaImani Cleaning Services Team`,
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 700px; margin: 0 auto; padding: 0; background-color: #f8f9fa;">
             <!-- Header -->
             <div style="background: linear-gradient(135deg, #4285F4 0%, #4285F4 100%); color: white; padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0;">
-                <div style="background: white; width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; padding: 8px; box-sizing: border-box;">
-                    <img src="https://i.imgur.com/qB05y7p.png" alt="NiaImani Logo" style="max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; border-radius: 4px;">
+                <div style="background: white; width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; padding: 6px; box-sizing: border-box;">
+                  <img src="https://i.imgur.com/qB05y7p.png" alt="NiaImani Logo" style="width: 100%; height: 100%; object-fit: contain; display: block;">
                 </div>
                 <h1 style="margin: 0; font-size: 28px; font-weight: 300;">Booking Confirmation</h1>
                 <p style="margin: 10px 0 0; opacity: 0.9; font-size: 16px;">Thank you for choosing NiaImani Cleaning Services</p>
@@ -240,7 +240,7 @@ NiaImani Cleaning Services Team`,
                 <!-- Service Details Card -->
                 <div style="background: #f1f3f4; padding: 25px; border-radius: 12px; margin-bottom: 25px; border: 2px solid #e8eaed;">
                     <h2 style="margin: 0 0 20px; color: #1a73e8; font-size: 22px; display: flex; align-items: center;">
-                        <span style="margin-right: 10px;">🏠</span>
+                        <span style="margin-right: 10px;"></span>
                         Service Details
                     </h2>
                     
@@ -305,7 +305,7 @@ NiaImani Cleaning Services Team`,
                 <!-- Appointment Details Card -->
                 <div style="background: #e3f2fd; padding: 25px; border-radius: 12px; margin-bottom: 25px; border-left: 5px solid #2196f3;">
                     <h2 style="margin: 0 0 20px; color: #1565c0; font-size: 22px; display: flex; align-items: center;">
-                        <span style="margin-right: 10px;">📅</span>
+                        <span style="margin-right: 10px;"></span>
                         Service Slot
                     </h2>
                     
@@ -331,7 +331,7 @@ NiaImani Cleaning Services Team`,
                 <!-- Additional Information Card -->
                 <div style="background: #fff3e0; padding: 25px; border-radius: 12px; margin-bottom: 25px; border-left: 5px solid #ff9800;">
                     <h2 style="margin: 0 0 15px; color: #ef6c00; font-size: 22px; display: flex; align-items: center;">
-                        <span style="margin-right: 10px;">📝</span>
+                        <span style="margin-right: 10px;"></span>
                         Additional Information
                     </h2>
                     <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ffcc80;">
@@ -341,22 +341,22 @@ NiaImani Cleaning Services Team`,
                 ` : ''}
 
                 <!-- What's Next Section -->
-                <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%); padding: 25px; border-radius: 12px; margin-bottom: 25px;">
-                    <h2 style="margin: 0 0 15px; color: #2e7d32; font-size: 20px; display: flex; align-items: center;">
-                        <span style="margin-right: 10px;">✨</span>
+                <div style="background: linear-gradient(135deg, #28A745 0%, #28A745 100%); padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                    <h2 style="margin: 0 0 15px; color: white; font-size: 20px; display: flex; align-items: center;">
+                        <span style="margin-right: 10px;"></span>
                         What Happens Next?
                     </h2>
-                    <div style="color: #1b5e20;">
+                    <div style="color: #28A745;">
                         <p style="margin: 0 0 10px; display: flex; align-items: center;">
-                            <span style="background: #4caf50; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 12px; font-weight: bold;">1</span>
+                            <span style="background: white; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 12px; font-weight: bold;">*</span>
                             We'll call you within 24 hours to confirm details
                         </p>
                         <p style="margin: 0 0 10px; display: flex; align-items: center;">
-                            <span style="background: #4caf50; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 12px; font-weight: bold;">2</span>
+                            <span style="background: white; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 12px; font-weight: bold;">*</span>
                             Final quotation will be provided
                         </p>
                         <p style="margin: 0; display: flex; align-items: center;">
-                            <span style="background: #4caf50; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 12px; font-weight: bold;">3</span>
+                            <span style="background: white; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 12px; font-weight: bold;">*</span>
                             Our professional team will arrive as scheduled
                         </p>
                     </div>
@@ -366,7 +366,7 @@ NiaImani Cleaning Services Team`,
             <!-- Footer -->
             <div style="text-align: center; padding: 20px; color: #666; font-size: 14px;">
                 <p style="margin: 0;">NiaImani Group Cleaning Services</p>
-                <p style="margin: 5px 0 0;">Professional cleaning you can trust</p>
+                <p style="margin: 5px 0 0;">Eco-Friendly | Reliable | Professional</p>
             </div>
         </div>
     `
@@ -410,9 +410,9 @@ Please follow up with the client to confirm the service and provide quotation.`,
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 700px; margin: 0 auto; padding: 0; background-color: #f8f9fa;">
             <!-- Header -->
             <div style="background: linear-gradient(135deg, #4285F4 0%, #4285F4 100%); color: white; padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0;">
-               <div style="background: white; width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; padding: 8px; box-sizing: border-box;">
-                 <img src="https://i.imgur.com/qB05y7p.png" alt="NiaImani Logo" style="max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; border-radius: 4px;">
-              </div>
+               <div style="background: white; width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; padding: 6px; box-sizing: border-box;">
+                 <img src="https://i.imgur.com/qB05y7p.png" alt="NiaImani Logo" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+               </div>
                 <h1 style="margin: 0; font-size: 28px; font-weight: 300;">New Cleaning Service Booking</h1>
                 <p style="margin: 10px 0 0; opacity: 0.9; font-size: 16px;">Booking received from ${name}</p>
             </div>
