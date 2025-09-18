@@ -563,27 +563,7 @@ Please follow up with the client to confirm the service and provide quotation.`,
                 </div>
                 ` : ''}
 
-                <!-- Action Items -->
-                <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%); padding: 25px; border-radius: 12px; border: 2px solid #4caf50;">
-                    <h2 style="margin: 0 0 15px; color: #2e7d32; font-size: 20px; display: flex; align-items: center;">
-                        <span style="margin-right: 10px;"></span>
-                        Next Steps
-                    </h2>
-                    <div style="color: #1b5e20;">
-                        <p style="margin: 0 0 10px; display: flex; align-items: center;">
-                            <span style="background: #4caf50; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 12px; font-weight: bold;">1</span>
-                            Contact client within 24 hours to confirm details
-                        </p>
-                        <p style="margin: 0 0 10px; display: flex; align-items: center;">
-                            <span style="background: #4caf50; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 12px; font-weight: bold;">2</span>
-                            Prepare and send detailed quotation
-                        </p>
-                        <p style="margin: 0; display: flex; align-items: center;">
-                            <span style="background: #4caf50; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 12px; font-weight: bold;">3</span>
-                            Schedule service and assign team
-                        </p>
-                    </div>
-                </div>
+               
             </div>
             
             <!-- Footer -->
