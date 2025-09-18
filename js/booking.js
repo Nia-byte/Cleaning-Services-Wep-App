@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeAddons();
     initializeContinueButton();
     initializeModal();
+    initializeFormValidation();
     updateTabAccessibility(); // Initialize tab accessibility
     updatePrice();
 });
@@ -121,15 +122,29 @@ function isCurrentTabComplete() {
             }
             return false;
             
-        case 2: // Your Information tab
-            const fullName = document.getElementById('full-name')?.value || '';
-            const email = document.getElementById('email')?.value || '';
-            const phone = document.getElementById('phone')?.value || '';
+        case 2: // Your Information tab - CHECK ALL REQUIRED FIELDS
+            const fullName = document.getElementById('full-name')?.value?.trim() || '';
+            const email = document.getElementById('email')?.value?.trim() || '';
+            const phone = document.getElementById('phone')?.value?.trim() || '';
             const date = document.getElementById('preferred-booking-date')?.value || '';
             const time = document.getElementById('preferred-time')?.value || '';
-            const address = document.getElementById('address')?.value || '';
+            const address = document.getElementById('address')?.value?.trim() || '';
+            const bookingTypeSelected = document.querySelector('input[name="booking-type"]:checked');
             
-            return fullName && email && phone && date && time && address;
+            const isComplete = fullName && email && phone && date && time && address && bookingTypeSelected;
+            
+            console.log('Tab 2 completion check:', {
+                fullName: !!fullName,
+                email: !!email,
+                phone: !!phone, 
+                date: !!date,
+                time: !!time,
+                address: !!address,
+                bookingType: !!bookingTypeSelected,
+                isComplete: isComplete
+            });
+            
+            return isComplete;
             
         case 3: // Confirmation tab
             return true;
@@ -138,6 +153,7 @@ function isCurrentTabComplete() {
             return false;
     }
 }
+
 
 // Update which tabs are accessible based on completion
 function updateAccessibleTabs() {
@@ -316,11 +332,19 @@ function switchTab(tabIndex) {
 
 
 function nextTab() {
+    console.log('nextTab called, currentTab2:', currentTab2);
+    console.log('isCurrentTabComplete():', isCurrentTabComplete());
+    
     if (currentTab2 === 2 && isCurrentTabComplete()) {
+        // Submit booking when moving from "Your Information" to "Booking Details"
+        console.log('Submitting booking...');
         submitBooking();
     } else if (currentTab2 < 2 && isCurrentTabComplete()) {
         // Normal tab progression for tabs 0 and 1
+        console.log('Moving to next tab...');
         switchTab(currentTab2 + 1);
+    } else {
+        console.log('Tab not complete or invalid progression');
     }
 }
 
@@ -670,18 +694,35 @@ function updateContinueButton() {
     } else if (currentTab2 === 2) {
         continueBtn.textContent = 'Continue to Booking Details';
         
-        // Check if required fields are filled for the "Your Information" tab
-        const fullName = document.getElementById('full-name')?.value || '';
-        const email = document.getElementById('email')?.value || '';
-        const phone = document.getElementById('phone')?.value || '';
+        // Check ALL required fields for the "Your Information" tab
+        const fullName = document.getElementById('full-name')?.value?.trim() || '';
+        const email = document.getElementById('email')?.value?.trim() || '';
+        const phone = document.getElementById('phone')?.value?.trim() || '';
+        const date = document.getElementById('preferred-booking-date')?.value || '';
+        const time = document.getElementById('preferred-time')?.value || '';
+        const address = document.getElementById('address')?.value?.trim() || '';
+        const bookingTypeSelected = document.querySelector('input[name="booking-type"]:checked');
         
-        continueBtn.disabled = !fullName || !email || !phone;
+        // Enable button only if ALL required fields are filled
+        continueBtn.disabled = !fullName || !email || !phone || !date || !time || !address || !bookingTypeSelected;
+        
+        console.log('Form validation check:', {
+            fullName: !!fullName,
+            email: !!email, 
+            phone: !!phone,
+            date: !!date,
+            time: !!time,
+            address: !!address,
+            bookingType: !!bookingTypeSelected,
+            buttonDisabled: continueBtn.disabled
+        });
+        
     } else if (currentTab2 === 3) {
         // Tab 3 is the confirmation tab - hide the button initially
-        // It will be shown/hidden by the submission process
         continueBtn.style.display = 'none';
     }
 }
+
 
 
 async function submitBooking() {
@@ -714,7 +755,8 @@ async function submitBooking() {
         const time = document.getElementById('preferred-time')?.value || '';
         const address = document.getElementById('address')?.value || '';
         const specialInstructions = document.getElementById('special-instructions')?.value || '';
-        const bookingType = document.querySelector('input[name="booking-type"]:checked')?.value || 'Personal';
+       const bookingType = document.querySelector('input[name="booking-type"]:checked')?.value || 'personal';
+
 
         // Collect booking data
         const bookingData = {
@@ -1027,4 +1069,47 @@ if (virtualAssessment && onsiteAssessment) {
             virtualAssessment.checked = false;
         }
     });
+}
+
+
+function initializeFormValidation() {
+    // Add event listeners for all form inputs to trigger validation
+    const formInputs = ['full-name', 'email', 'phone', 'preferred-booking-date', 'preferred-time', 'address'];
+    
+    formInputs.forEach(inputId => {
+        const input = document.getElementById(inputId);
+        if (input) {
+            input.addEventListener('input', () => {
+                if (currentTab2 === 2) {
+                    updateContinueButton();
+                    updateAccessibleTabs();
+                }
+            });
+            
+            input.addEventListener('change', () => {
+                if (currentTab2 === 2) {
+                    updateContinueButton();
+                    updateAccessibleTabs();
+                }
+            });
+        }
+    });
+    
+    // Add listeners for booking type radio buttons
+    const bookingTypeRadios = document.querySelectorAll('input[name="booking-type"]');
+    bookingTypeRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            if (currentTab2 === 2) {
+                updateContinueButton();
+                updateAccessibleTabs();
+            }
+        });
+    });
+}
+
+function setDefaultBookingType() {
+    const personalRadio = document.getElementById('personal');
+    if (personalRadio && !document.querySelector('input[name="booking-type"]:checked')) {
+        personalRadio.checked = true;
+    }
 }
