@@ -131,16 +131,28 @@ exports.handler = async (event, context) => {
         }
 
         const { 
-            name, 
+           name, 
             email, 
             phone, 
             date, 
             time, 
             bookingType,
             address,
-            additionalInfo, 
+            additionalInfo,
+            // Service details
+            serviceType,
+            cleaningType,
+            beds,
+            baths,
+            frequency,
+            recurringFrequency,
+            officeSize,
+            constructionType,
+            squareMeters,
+            totalPrice
         } = requestBody;
 
+        
         // Validate required fields
         if (!name || !email || !date || !time) {
             return {
@@ -167,14 +179,20 @@ exports.handler = async (event, context) => {
 
         // Format the booking details for plain text
         const bookingDetails = `
-      Name: ${name}
-      Email: ${email}
-      Phone: ${phone || 'Not provided'}
-      Date: ${date}
-      Time: ${time}
-      Booking Type: ${bookingType}
-      Address: ${address || 'Not specified'}
-      Additional Information: ${additionalInfo || 'No additional information'}
+          Name: ${name}
+          Email: ${email}
+          Phone: ${phone || 'Not provided'}
+          Date: ${date}
+          Time: ${time}
+          Booking Type: ${bookingType}
+          Address: ${address || 'Not specified'}
+          Service Type: ${serviceType || 'Not specified'}
+          ${cleaningType ? `Cleaning Type: ${cleaningType}` : ''}
+          ${beds ? `Bedrooms: ${beds}` : ''}
+          ${baths ? `Bathrooms: ${baths}` : ''}
+          ${frequency ? `Frequency: ${frequency}` : ''}
+          ${totalPrice ? `Estimated Price: R${totalPrice} ZAR` : ''}
+          Additional Information: ${additionalInfo || 'No additional information'}
     `;
 
         console.log('Processing booking for:', email);
@@ -235,90 +253,28 @@ NiaImani Cleaning Services Team`,
       `
         };
 
-       // Helper function to format service details for admin email
-function formatServiceDetailsForAdmin(bookingData) {
-    let serviceDetails = '';
-    
-    if (bookingData.serviceType === 'residential') {
-        serviceDetails = `
-            <h3 style="color: #4285F4; margin-top: 25px; margin-bottom: 15px;">Service Configuration:</h3>
-            <div style="background: white; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555; width: 40%;">Cleaning Type:</td><td style="padding: 8px 0; color: #333;">${bookingData.cleaningType || 'Standard'}</td></tr>
-                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Bedrooms:</td><td style="padding: 8px 0; color: #333;">${bookingData.beds}</td></tr>
-                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Bathrooms:</td><td style="padding: 8px 0; color: #333;">${bookingData.baths}</td></tr>
-                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Service Frequency:</td><td style="padding: 8px 0; color: #333;">${bookingData.frequency === 'recurring' ? `Recurring (${bookingData.recurringFrequency})` : 'Once-off'}</td></tr>
-                </table>
-            </div>
-        `;
-    } else if (bookingData.serviceType === 'green') {
-        serviceDetails = `
-            <h3 style="color: #4285F4; margin-top: 25px; margin-bottom: 15px;">Service Configuration:</h3>
-            <div style="background: white; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555; width: 40%;">Service Type:</td><td style="padding: 8px 0; color: #333;">Eco-friendly Green Cleaning</td></tr>
-                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Bedrooms:</td><td style="padding: 8px 0; color: #333;">${bookingData.beds}</td></tr>
-                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Bathrooms:</td><td style="padding: 8px 0; color: #333;">${bookingData.baths}</td></tr>
-                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Service Frequency:</td><td style="padding: 8px 0; color: #333;">${bookingData.frequency === 'recurring' ? `Recurring (${bookingData.recurringFrequency})` : 'Once-off'}</td></tr>
-                </table>
-            </div>
-        `;
-    } else if (bookingData.serviceType === 'post-construction') {
-        let projectDetails = '';
-        if (bookingData.constructionType === 'square-meter') {
-            projectDetails = `${bookingData.squareMeters} square meters (R25-R50 per sq m)`;
-        } else {
-            projectDetails = `${bookingData.constructionType} project`;
-        }
-        
-        serviceDetails = `
-            <h3 style="color: #4285F4; margin-top: 25px; margin-bottom: 15px;">Service Configuration:</h3>
-            <div style="background: white; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555; width: 40%;">Service Type:</td><td style="padding: 8px 0; color: #333;">Post-Construction Cleanup</td></tr>
-                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Project Size:</td><td style="padding: 8px 0; color: #333;">${projectDetails}</td></tr>
-                </table>
-            </div>
-        `;
-    } else if (bookingData.serviceType === 'office') {
-        serviceDetails = `
-            <h3 style="color: #4285F4; margin-top: 25px; margin-bottom: 15px;">Service Configuration:</h3>
-            <div style="background: white; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555; width: 40%;">Service Type:</td><td style="padding: 8px 0; color: #333;">Office/Commercial Cleaning</td></tr>
-                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Office Size:</td><td style="padding: 8px 0; color: #333;">${bookingData.officeSize}</td></tr>
-                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Service Frequency:</td><td style="padding: 8px 0; color: #333;">${bookingData.frequency === 'recurring' ? 'Monthly Recurring' : 'Once-off'}</td></tr>
-                </table>
-            </div>
-        `;
-    }
-    
-    return serviceDetails;
-}
-
+       
 // Enhanced admin email with complete service details
-const adminEmail = {
-    to: process.env.ADMIN_EMAIL,
-    from: {
-        email: process.env.ADMIN_EMAIL,
-        name: 'NiaImani Cleaning Services'
-    },
-    subject: `New ${requestBody.serviceType || 'Cleaning'} Booking - ${name}`,
-    text: `New cleaning booking received!
+        const adminEmail = {
+            to: process.env.ADMIN_EMAIL,
+            from: {
+                email: process.env.ADMIN_EMAIL,
+                name: 'NiaImani Cleaning Services'
+            },
+            subject: `New ${serviceType || 'Cleaning'} Booking - ${name}`,
+            text: `New cleaning booking received!
 
 Service Details:
-${requestBody.serviceType ? `Service Type: ${requestBody.serviceType}` : ''}
-${requestBody.cleaningType ? `Cleaning Type: ${requestBody.cleaningType}` : ''}
-${requestBody.beds ? `Bedrooms: ${requestBody.beds}` : ''}
-${requestBody.baths ? `Bathrooms: ${requestBody.baths}` : ''}
-${requestBody.frequency ? `Frequency: ${requestBody.frequency}` : ''}
-${requestBody.recurringFrequency ? `Recurring Schedule: ${requestBody.recurringFrequency}` : ''}
-${requestBody.officeSize ? `Office Size: ${requestBody.officeSize}` : ''}
-${requestBody.constructionType ? `Construction Type: ${requestBody.constructionType}` : ''}
-${requestBody.squareMeters ? `Square Meters: ${requestBody.squareMeters}` : ''}
-Estimated Price: R${requestBody.totalPrice || 'TBD'}
-
-
+${serviceType ? `Service Type: ${serviceType}` : ''}
+${cleaningType ? `Cleaning Type: ${cleaningType}` : ''}
+${beds ? `Bedrooms: ${beds}` : ''}
+${baths ? `Bathrooms: ${baths}` : ''}
+${frequency ? `Frequency: ${frequency}` : ''}
+${recurringFrequency ? `Recurring Schedule: ${recurringFrequency}` : ''}
+${officeSize ? `Office Size: ${officeSize}` : ''}
+${constructionType ? `Construction Type: ${constructionType}` : ''}
+${squareMeters ? `Square Meters: ${squareMeters}` : ''}
+Estimated Price: R${totalPrice || 'TBD'}
 
 Client Information:
 Name: ${name}
@@ -331,7 +287,7 @@ Address: ${address || 'Not specified'}
 Additional Information: ${additionalInfo || 'No additional information'}
 
 Please follow up with the client to confirm the service and provide quotation.`,
-    html: `
+            html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 700px; margin: 0 auto; padding: 0; background-color: #f8f9fa;">
             <!-- Header -->
             <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0;">
@@ -354,6 +310,7 @@ Please follow up with the client to confirm the service and provide quotation.`,
                     <p style="margin: 0; color: #2d3436; font-weight: 500;">New booking requires immediate follow-up and quotation</p>
                 </div>
 
+                ${serviceType ? `
                 <!-- Service Details Card -->
                 <div style="background: #f1f3f4; padding: 25px; border-radius: 12px; margin-bottom: 25px; border: 2px solid #e8eaed;">
                     <h2 style="margin: 0 0 20px; color: #1a73e8; font-size: 22px; display: flex; align-items: center;">
@@ -362,63 +319,62 @@ Please follow up with the client to confirm the service and provide quotation.`,
                     </h2>
                     
                     <div style="display: grid; gap: 12px;">
-                        ${requestBody.serviceType ? `
                         <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
                             <span style="font-weight: 600; color: #5f6368; min-width: 140px;">Service Type:</span>
-                            <span style="color: #1a73e8; font-weight: 500; text-transform: capitalize;">${requestBody.serviceType}</span>
+                            <span style="color: #1a73e8; font-weight: 500; text-transform: capitalize;">${serviceType}</span>
                         </div>
-                        ` : ''}
                         
-                        ${requestBody.cleaningType ? `
+                        ${cleaningType ? `
                         <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
                             <span style="font-weight: 600; color: #5f6368; min-width: 140px;">Cleaning Type:</span>
-                            <span style="color: #202124; text-transform: capitalize;">${requestBody.cleaningType}</span>
+                            <span style="color: #202124; text-transform: capitalize;">${cleaningType}</span>
                         </div>
                         ` : ''}
                         
-                        ${requestBody.beds ? `
+                        ${beds ? `
                         <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
                             <span style="font-weight: 600; color: #5f6368; min-width: 140px;">Bedrooms:</span>
-                            <span style="color: #202124;">${requestBody.beds}</span>
+                            <span style="color: #202124;">${beds}</span>
                         </div>
                         ` : ''}
                         
-                        ${requestBody.baths ? `
+                        ${baths ? `
                         <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
                             <span style="font-weight: 600; color: #5f6368; min-width: 140px;">Bathrooms:</span>
-                            <span style="color: #202124;">${requestBody.baths}</span>
+                            <span style="color: #202124;">${baths}</span>
                         </div>
                         ` : ''}
                         
-                        ${requestBody.frequency ? `
+                        ${frequency ? `
                         <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
                             <span style="font-weight: 600; color: #5f6368; min-width: 140px;">Frequency:</span>
-                            <span style="color: #202124; text-transform: capitalize;">${requestBody.frequency}${requestBody.recurringFrequency ? ` (${requestBody.recurringFrequency})` : ''}</span>
+                            <span style="color: #202124; text-transform: capitalize;">${frequency}${recurringFrequency ? ` (${recurringFrequency})` : ''}</span>
                         </div>
                         ` : ''}
                         
-                        ${requestBody.officeSize ? `
+                        ${officeSize ? `
                         <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
                             <span style="font-weight: 600; color: #5f6368; min-width: 140px;">Office Size:</span>
-                            <span style="color: #202124; text-transform: capitalize;">${requestBody.officeSize}</span>
+                            <span style="color: #202124; text-transform: capitalize;">${officeSize}</span>
                         </div>
                         ` : ''}
                         
-                        ${requestBody.constructionType ? `
+                        ${constructionType ? `
                         <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
                             <span style="font-weight: 600; color: #5f6368; min-width: 140px;">Construction Type:</span>
-                            <span style="color: #202124; text-transform: capitalize;">${requestBody.constructionType}${requestBody.squareMeters ? ` (${requestBody.squareMeters} sq m)` : ''}</span>
+                            <span style="color: #202124; text-transform: capitalize;">${constructionType}${squareMeters ? ` (${squareMeters} sq m)` : ''}</span>
                         </div>
                         ` : ''}
                         
-                        ${requestBody.totalPrice ? `
+                        ${totalPrice ? `
                         <div style="display: flex; padding: 15px 0; background: #e8f0fe; margin-top: 10px; border-radius: 8px; padding-left: 15px; padding-right: 15px;">
                             <span style="font-weight: 600; color: #1565c0; min-width: 140px;">Estimated Price:</span>
-                            <span style="color: #1565c0; font-weight: 700; font-size: 18px;">R${requestBody.totalPrice} ZAR</span>
+                            <span style="color: #1565c0; font-weight: 700; font-size: 18px;">R${totalPrice} ZAR</span>
                         </div>
                         ` : ''}
                     </div>
                 </div>
+                ` : ''}
 
                 <!-- Client Information Card -->
                 <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
@@ -517,8 +473,9 @@ Please follow up with the client to confirm the service and provide quotation.`,
                 <p style="margin: 5px 0 0;">Automated booking notification system</p>
             </div>
         </div>
-    `
-};
+            `
+        };
+        
         console.log('Attempting to send emails...');
 
         try {
