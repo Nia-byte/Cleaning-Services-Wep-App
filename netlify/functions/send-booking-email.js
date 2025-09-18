@@ -235,57 +235,288 @@ NiaImani Cleaning Services Team`,
       `
         };
 
-        // Email to the admin (new booking notification)
-        const adminEmail = {
-            to: process.env.ADMIN_EMAIL,
-            from: {
-                email: process.env.ADMIN_EMAIL,
-                name: 'NiaImani Cleaning Services'
-            },
-            subject: `New Cleaning Booking - ${name}`,
-            text: `New cleaning booking received!
-
-Client details:
-${bookingDetails}
-
-Please follow up with the client to confirm the service and send quotation.`,
-            html: `
-             <img src="https://i.imgur.com/qB05y7p.png"" alt="NiaImani Cleaning Services Logo" style="max-width: 120px; height: auto; margin-bottom: 15px;">
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="background-color: #4285F4; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
-            <h2 style="margin: 0;">New Cleaning Servive Booking</h2>
-          </div>
-          
-          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 0 0 8px 8px;">
-            <p style="font-size: 16px; color: #333; margin-top: 0;"><strong>A new cleaning service booking has been received!</strong></p>
-            
-            <h3 style="color: #4285F4;">Client Details:</h3>
-            <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 4px;">
-              <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Name:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${name}</td></tr>
-              <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Email:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;"><a href="mailto:${email}" style="color: #4285F4;">${email}</a></td></tr>
-              <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Phone:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${phone || 'Not provided'}</td></tr>
-              <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Date:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${date}</td></tr>
-              <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Booking Type:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${bookingType}</td></tr>
-             <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Time:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${time}</td></tr>
-              <tr><td style="padding: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #eee;">Location:</td><td style="padding: 12px; color: #333; border-bottom: 1px solid #eee;">${address || 'Not specified'}</td></tr>
-            </table>
-            
-            
-            ${additionalInfo ? `
-            <h3 style="color: #4285F4; margin-top: 25px;">Additional Information To Help Prepare for Service:</h3>
-            <div style="background: white; padding: 15px; border-radius: 4px; color: #333;">
-              ${additionalInfo.replace(/\n/g, '<br>')}
+       // Helper function to format service details for admin email
+function formatServiceDetailsForAdmin(bookingData) {
+    let serviceDetails = '';
+    
+    if (bookingData.serviceType === 'residential') {
+        serviceDetails = `
+            <h3 style="color: #4285F4; margin-top: 25px; margin-bottom: 15px;">Service Configuration:</h3>
+            <div style="background: white; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555; width: 40%;">Cleaning Type:</td><td style="padding: 8px 0; color: #333;">${bookingData.cleaningType || 'Standard'}</td></tr>
+                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Bedrooms:</td><td style="padding: 8px 0; color: #333;">${bookingData.beds}</td></tr>
+                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Bathrooms:</td><td style="padding: 8px 0; color: #333;">${bookingData.baths}</td></tr>
+                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Service Frequency:</td><td style="padding: 8px 0; color: #333;">${bookingData.frequency === 'recurring' ? `Recurring (${bookingData.recurringFrequency})` : 'Once-off'}</td></tr>
+                </table>
             </div>
-            ` : ''}
-            
-            <div style="margin-top: 25px; padding: 15px; background: #fff3cd; border-radius: 4px; border-left: 4px solid #ffc107;">
-              <p style="margin: 0; color: #856404;"><strong>Action Required:</strong> Please follow up with the client to confirm the appointment and send service details.</p>
+        `;
+    } else if (bookingData.serviceType === 'green') {
+        serviceDetails = `
+            <h3 style="color: #4285F4; margin-top: 25px; margin-bottom: 15px;">Service Configuration:</h3>
+            <div style="background: white; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555; width: 40%;">Service Type:</td><td style="padding: 8px 0; color: #333;">Eco-friendly Green Cleaning</td></tr>
+                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Bedrooms:</td><td style="padding: 8px 0; color: #333;">${bookingData.beds}</td></tr>
+                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Bathrooms:</td><td style="padding: 8px 0; color: #333;">${bookingData.baths}</td></tr>
+                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Service Frequency:</td><td style="padding: 8px 0; color: #333;">${bookingData.frequency === 'recurring' ? `Recurring (${bookingData.recurringFrequency})` : 'Once-off'}</td></tr>
+                </table>
             </div>
-          </div>
+        `;
+    } else if (bookingData.serviceType === 'post-construction') {
+        let projectDetails = '';
+        if (bookingData.constructionType === 'square-meter') {
+            projectDetails = `${bookingData.squareMeters} square meters (R25-R50 per sq m)`;
+        } else {
+            projectDetails = `${bookingData.constructionType} project`;
+        }
+        
+        serviceDetails = `
+            <h3 style="color: #4285F4; margin-top: 25px; margin-bottom: 15px;">Service Configuration:</h3>
+            <div style="background: white; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555; width: 40%;">Service Type:</td><td style="padding: 8px 0; color: #333;">Post-Construction Cleanup</td></tr>
+                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Project Size:</td><td style="padding: 8px 0; color: #333;">${projectDetails}</td></tr>
+                </table>
+            </div>
+        `;
+    } else if (bookingData.serviceType === 'office') {
+        serviceDetails = `
+            <h3 style="color: #4285F4; margin-top: 25px; margin-bottom: 15px;">Service Configuration:</h3>
+            <div style="background: white; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555; width: 40%;">Service Type:</td><td style="padding: 8px 0; color: #333;">Office/Commercial Cleaning</td></tr>
+                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Office Size:</td><td style="padding: 8px 0; color: #333;">${bookingData.officeSize}</td></tr>
+                    <tr><td style="padding: 8px 0; font-weight: bold; color: #555;">Service Frequency:</td><td style="padding: 8px 0; color: #333;">${bookingData.frequency === 'recurring' ? 'Monthly Recurring' : 'Once-off'}</td></tr>
+                </table>
+            </div>
+        `;
+    }
+    
+    return serviceDetails;
+}
+
+// Enhanced admin email with complete service details
+const adminEmail = {
+    to: process.env.ADMIN_EMAIL,
+    from: {
+        email: process.env.ADMIN_EMAIL,
+        name: 'NiaImani Cleaning Services'
+    },
+    subject: `New ${requestBody.serviceType || 'Cleaning'} Booking - ${name}`,
+    text: `New cleaning booking received!
+
+Service Details:
+${requestBody.serviceType ? `Service Type: ${requestBody.serviceType}` : ''}
+${requestBody.cleaningType ? `Cleaning Type: ${requestBody.cleaningType}` : ''}
+${requestBody.beds ? `Bedrooms: ${requestBody.beds}` : ''}
+${requestBody.baths ? `Bathrooms: ${requestBody.baths}` : ''}
+${requestBody.frequency ? `Frequency: ${requestBody.frequency}` : ''}
+${requestBody.recurringFrequency ? `Recurring Schedule: ${requestBody.recurringFrequency}` : ''}
+${requestBody.officeSize ? `Office Size: ${requestBody.officeSize}` : ''}
+${requestBody.constructionType ? `Construction Type: ${requestBody.constructionType}` : ''}
+${requestBody.squareMeters ? `Square Meters: ${requestBody.squareMeters}` : ''}
+Estimated Price: R${requestBody.totalPrice || 'TBD'}
+
+Client Information:
+Name: ${name}
+Email: ${email}
+Phone: ${phone || 'Not provided'}
+Date: ${date}
+Time: ${time}
+Booking Type: ${bookingType}
+Address: ${address || 'Not specified'}
+Additional Information: ${additionalInfo || 'No additional information'}
+
+Please follow up with the client to confirm the service and provide quotation.`,
+    html: `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 700px; margin: 0 auto; padding: 0; background-color: #f8f9fa;">
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0;">
+                <div style="background: white; width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;">
+                    <span style="font-size: 24px; color: #667eea;">🧽</span>
+                </div>
+                <h1 style="margin: 0; font-size: 28px; font-weight: 300;">New Cleaning Service Booking</h1>
+                <p style="margin: 10px 0 0; opacity: 0.9; font-size: 16px;">Booking received from ${name}</p>
+            </div>
+            
+            <!-- Content Container -->
+            <div style="background: white; padding: 30px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                
+                <!-- Priority Alert -->
+                <div style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #ff6b6b;">
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="font-size: 20px; margin-right: 10px;">⚡</span>
+                        <h3 style="margin: 0; color: #d63031; font-size: 18px;">Action Required</h3>
+                    </div>
+                    <p style="margin: 0; color: #2d3436; font-weight: 500;">New booking requires immediate follow-up and quotation</p>
+                </div>
+
+                <!-- Service Details Card -->
+                <div style="background: #f1f3f4; padding: 25px; border-radius: 12px; margin-bottom: 25px; border: 2px solid #e8eaed;">
+                    <h2 style="margin: 0 0 20px; color: #1a73e8; font-size: 22px; display: flex; align-items: center;">
+                        <span style="margin-right: 10px;">🏠</span>
+                        Service Configuration
+                    </h2>
+                    
+                    <div style="display: grid; gap: 12px;">
+                        ${requestBody.serviceType ? `
+                        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
+                            <span style="font-weight: 600; color: #5f6368; min-width: 140px;">Service Type:</span>
+                            <span style="color: #1a73e8; font-weight: 500; text-transform: capitalize;">${requestBody.serviceType}</span>
+                        </div>
+                        ` : ''}
+                        
+                        ${requestBody.cleaningType ? `
+                        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
+                            <span style="font-weight: 600; color: #5f6368; min-width: 140px;">Cleaning Type:</span>
+                            <span style="color: #202124; text-transform: capitalize;">${requestBody.cleaningType}</span>
+                        </div>
+                        ` : ''}
+                        
+                        ${requestBody.beds ? `
+                        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
+                            <span style="font-weight: 600; color: #5f6368; min-width: 140px;">Bedrooms:</span>
+                            <span style="color: #202124;">${requestBody.beds}</span>
+                        </div>
+                        ` : ''}
+                        
+                        ${requestBody.baths ? `
+                        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
+                            <span style="font-weight: 600; color: #5f6368; min-width: 140px;">Bathrooms:</span>
+                            <span style="color: #202124;">${requestBody.baths}</span>
+                        </div>
+                        ` : ''}
+                        
+                        ${requestBody.frequency ? `
+                        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
+                            <span style="font-weight: 600; color: #5f6368; min-width: 140px;">Frequency:</span>
+                            <span style="color: #202124; text-transform: capitalize;">${requestBody.frequency}${requestBody.recurringFrequency ? ` (${requestBody.recurringFrequency})` : ''}</span>
+                        </div>
+                        ` : ''}
+                        
+                        ${requestBody.officeSize ? `
+                        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
+                            <span style="font-weight: 600; color: #5f6368; min-width: 140px;">Office Size:</span>
+                            <span style="color: #202124; text-transform: capitalize;">${requestBody.officeSize}</span>
+                        </div>
+                        ` : ''}
+                        
+                        ${requestBody.constructionType ? `
+                        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
+                            <span style="font-weight: 600; color: #5f6368; min-width: 140px;">Construction Type:</span>
+                            <span style="color: #202124; text-transform: capitalize;">${requestBody.constructionType}${requestBody.squareMeters ? ` (${requestBody.squareMeters} sq m)` : ''}</span>
+                        </div>
+                        ` : ''}
+                        
+                        ${requestBody.totalPrice ? `
+                        <div style="display: flex; padding: 15px 0; background: #e8f0fe; margin-top: 10px; border-radius: 8px; padding-left: 15px; padding-right: 15px;">
+                            <span style="font-weight: 600; color: #1565c0; min-width: 140px;">Estimated Price:</span>
+                            <span style="color: #1565c0; font-weight: 700; font-size: 18px;">R${requestBody.totalPrice} ZAR</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                <!-- Client Information Card -->
+                <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                    <h2 style="margin: 0 0 20px; color: #1a73e8; font-size: 22px; display: flex; align-items: center;">
+                        <span style="margin-right: 10px;">👤</span>
+                        Client Information
+                    </h2>
+                    
+                    <div style="display: grid; gap: 12px;">
+                        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
+                            <span style="font-weight: 600; color: #5f6368; min-width: 120px;">Name:</span>
+                            <span style="color: #202124; font-weight: 500;">${name}</span>
+                        </div>
+                        
+                        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
+                            <span style="font-weight: 600; color: #5f6368; min-width: 120px;">Email:</span>
+                            <a href="mailto:${email}" style="color: #1a73e8; text-decoration: none;">${email}</a>
+                        </div>
+                        
+                        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
+                            <span style="font-weight: 600; color: #5f6368; min-width: 120px;">Phone:</span>
+                            <a href="tel:${phone}" style="color: #1a73e8; text-decoration: none;">${phone || 'Not provided'}</a>
+                        </div>
+                        
+                        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #dadce0;">
+                            <span style="font-weight: 600; color: #5f6368; min-width: 120px;">Booking Type:</span>
+                            <span style="color: #202124; text-transform: capitalize;">${bookingType}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appointment Details Card -->
+                <div style="background: #e3f2fd; padding: 25px; border-radius: 12px; margin-bottom: 25px; border-left: 5px solid #2196f3;">
+                    <h2 style="margin: 0 0 20px; color: #1565c0; font-size: 22px; display: flex; align-items: center;">
+                        <span style="margin-right: 10px;">📅</span>
+                        Appointment Details
+                    </h2>
+                    
+                    <div style="display: grid; gap: 12px;">
+                        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #bbdefb;">
+                            <span style="font-weight: 600; color: #1565c0; min-width: 120px;">Date:</span>
+                            <span style="color: #0d47a1; font-weight: 500;">${new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                        </div>
+                        
+                        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #bbdefb;">
+                            <span style="font-weight: 600; color: #1565c0; min-width: 120px;">Time:</span>
+                            <span style="color: #0d47a1; font-weight: 500;">${time}</span>
+                        </div>
+                        
+                        <div style="padding: 12px 0;">
+                            <span style="font-weight: 600; color: #1565c0; display: block; margin-bottom: 8px;">Address:</span>
+                            <span style="color: #0d47a1; line-height: 1.5;">${address || 'Not specified'}</span>
+                        </div>
+                    </div>
+                </div>
+
+                ${additionalInfo ? `
+                <!-- Additional Information Card -->
+                <div style="background: #fff3e0; padding: 25px; border-radius: 12px; margin-bottom: 25px; border-left: 5px solid #ff9800;">
+                    <h2 style="margin: 0 0 15px; color: #ef6c00; font-size: 22px; display: flex; align-items: center;">
+                        <span style="margin-right: 10px;">📝</span>
+                        Additional Information
+                    </h2>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ffcc80;">
+                        <p style="margin: 0; color: #bf360c; line-height: 1.6; font-style: italic;">"${additionalInfo}"</p>
+                    </div>
+                </div>
+                ` : ''}
+
+                <!-- Action Items -->
+                <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%); padding: 25px; border-radius: 12px; border: 2px solid #4caf50;">
+                    <h2 style="margin: 0 0 15px; color: #2e7d32; font-size: 20px; display: flex; align-items: center;">
+                        <span style="margin-right: 10px;">✅</span>
+                        Next Steps
+                    </h2>
+                    <div style="color: #1b5e20;">
+                        <p style="margin: 0 0 10px; display: flex; align-items: center;">
+                            <span style="background: #4caf50; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 12px; font-weight: bold;">1</span>
+                            Contact client within 24 hours to confirm details
+                        </p>
+                        <p style="margin: 0 0 10px; display: flex; align-items: center;">
+                            <span style="background: #4caf50; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 12px; font-weight: bold;">2</span>
+                            Prepare and send detailed quotation
+                        </p>
+                        <p style="margin: 0; display: flex; align-items: center;">
+                            <span style="background: #4caf50; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 12px; font-weight: bold;">3</span>
+                            Schedule service and assign team
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div style="text-align: center; padding: 20px; color: #666; font-size: 14px;">
+                <p style="margin: 0;">NiaImani Group Cleaning Services</p>
+                <p style="margin: 5px 0 0;">Automated booking notification system</p>
+            </div>
         </div>
-      `
-        };
-
+    `
+};
         console.log('Attempting to send emails...');
 
         try {
