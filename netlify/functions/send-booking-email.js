@@ -203,7 +203,7 @@ NiaImani Cleaning Services Team`,
             html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="text-align: center; margin-bottom: 30px;">
-            <img src="https://imgur.com/a/gC4W8bX"" alt="NiaImani Cleaning Services Logo" style="max-width: 120px; height: auto; margin-bottom: 15px;">
+            <img src="https://i.imgur.com/qB05y7p.png"" alt="NiaImani Cleaning Services Logo" style="max-width: 120px; height: auto; margin-bottom: 15px;">
             <h1 style="color: #4285F4; margin-bottom: 10px;">NiaImani Cleaning Services</h1>
             <h2 style="color: #333; font-weight: normal;">Booking Confirmation</h2>
           </div>
@@ -250,7 +250,7 @@ ${bookingDetails}
 
 Please follow up with the client to confirm the service and send quotation.`,
             html: `
-             <img src="https://imgur.com/a/gC4W8bX"" alt="NiaImani Cleaning Services Logo" style="max-width: 120px; height: auto; margin-bottom: 15px;">
+             <img src="https://i.imgur.com/qB05y7p.png"" alt="NiaImani Cleaning Services Logo" style="max-width: 120px; height: auto; margin-bottom: 15px;">
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background-color: #4285F4; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
             <h2 style="margin: 0;">New Cleaning Servive Booking</h2>
