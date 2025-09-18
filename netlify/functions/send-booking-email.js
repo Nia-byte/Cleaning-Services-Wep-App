@@ -318,7 +318,7 @@ ${requestBody.constructionType ? `Construction Type: ${requestBody.constructionT
 ${requestBody.squareMeters ? `Square Meters: ${requestBody.squareMeters}` : ''}
 Estimated Price: R${requestBody.totalPrice || 'TBD'}
 
-${formatServiceDetailsForAdmin(requestBody)}
+
 
 Client Information:
 Name: ${name}
