@@ -765,3 +765,69 @@
                 slider?.startAutoPlay();
             }
         });
+
+
+        //LOADING ANIMATION
+        let timeouts = [];
+    
+    function startAnimation() {
+      // Clear any existing timeouts
+      timeouts.forEach(timeout => clearTimeout(timeout));
+      timeouts = [];
+      
+      const loadingContainer = document.getElementById('loadingContainer');
+      document.body.classList.add("loading"); // disable scroll
+      loadingContainer.classList.remove('fade-out');
+      loadingContainer.style.display = 'flex';
+      
+      // Reset all animations by removing and re-adding elements
+      const waterWaves = loadingContainer.querySelectorAll('.water-wave, .water-wave-2');
+      const whiteOverlay = loadingContainer.querySelector('.white-overlay');
+      const logoContainer = loadingContainer.querySelector('.logo-container');
+      const mainContent = document.querySelector('.main-content');
+      
+      // Reset styles
+      waterWaves.forEach(wave => {
+        wave.style.animation = 'none';
+        wave.offsetHeight; // Trigger reflow
+        wave.style.animation = null;
+      });
+      
+      whiteOverlay.style.animation = 'none';
+      whiteOverlay.offsetHeight;
+      whiteOverlay.style.animation = null;
+      
+      logoContainer.style.animation = 'none';
+      logoContainer.offsetHeight;
+      logoContainer.style.animation = null;
+      
+      const logo = logoContainer.querySelector('.logo');
+      const companyName = logoContainer.querySelector('.company-name');
+      
+      logo.style.animation = 'none';
+      logo.offsetHeight;
+      logo.style.animation = null;
+      
+      companyName.style.animation = 'none';
+      companyName.offsetHeight;
+      companyName.style.animation = null;
+      
+      mainContent.style.animation = 'none';
+      mainContent.offsetHeight;
+      mainContent.style.animation = null;
+      
+      // Schedule fade out and removal
+      timeouts.push(setTimeout(() => loadingContainer.classList.add('fade-out'), 5000));
+      timeouts.push(setTimeout(() => {
+        loadingContainer.style.display = 'none';
+        document.body.classList.remove("loading");
+    document.body.classList.add("loaded"); // re-enable scroll
+      }, 10000));
+    }
+    
+    function replayAnimation() {
+      startAnimation();
+    }
+    
+    // Start initial animation
+    startAnimation();
