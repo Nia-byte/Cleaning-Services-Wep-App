@@ -279,6 +279,8 @@ body {
     position: relative;
 }
 
+
+
 .radio.checked {
     border-color: #333;
 }
@@ -328,6 +330,8 @@ body {
     transition: background 0.3s ease;
 }
 
+
+
 .next-button:hover {
     background: #1c6fd9;
 }
@@ -350,6 +354,33 @@ body {
         font-size: 16px;
     }
 }
+
+
+@media (max-width: 768px) {
+
+.radio-option {
+    margin-left: -300px;
+}
+
+.radio-option label {
+        font-size: 16px;
+        line-height: 1.4;
+        word-wrap: break-word;
+        margin-left: -290px;
+        margin-top: 5px;
+    }
+
+.radio {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+    position: relative;
+}
+
+}
+
+
 .tab-content {
     display: none;
 }

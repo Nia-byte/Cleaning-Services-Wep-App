@@ -4052,8 +4052,8 @@ body.loaded {
       top: 0;
       left: 0;
       width: 100%;
-      height: 100%;
-      background: #10b4fa;
+      height: 150%;
+      background: #4484f4;
       transform: translateY(-100%);
       animation: dropDown 2s ease-out forwards;
       overflow: visible;
@@ -4076,7 +4076,7 @@ body.loaded {
       left: 0;
       width: 200%;
       height: 62px;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 62'%3E%3Cpath d='M0 0 H800 V32 Q650 72 500 32 T200 32 Q50 72 0 32 Z' fill='%2310b4fa'/%3E%3C/svg%3E") repeat-x;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 62'%3E%3Cpath d='M0 0 H800 V32 Q650 72 500 32 T200 32 Q50 72 0 32 Z' fill='%234484f4'/%3E%3C/svg%3E") repeat-x;
       animation: wave 4s linear infinite reverse; 
       opacity: 0.8;
     }
@@ -4182,16 +4182,16 @@ body.loaded {
 @media screen and (max-width: 768px) {
   .logo-container {
     gap: 6px;
-    margin-left: 20px;
+    margin-right: -135px;
   }
   
   .logo {
     width: 220px;
-    margin-right: -70px;
+    margin-right: -60px;
   }
   
   .company-name {
-    font-size: 1.8rem;
+    font-size: 1.7rem !important;
     white-space: nowrap;
   }
 }
@@ -4201,6 +4201,7 @@ body.loaded {
   .logo-container {
     gap: 5px;
     padding: 0 15px;
+    margin-right: -135px;
   }
   
   .logo {
@@ -4219,6 +4220,7 @@ body.loaded {
   .logo-container {
     gap: 4px;
     padding: 0 10px;
+    margin-right: -135px;
   }
   
   .logo {
@@ -4237,6 +4239,7 @@ body.loaded {
   .logo-container {
     gap: 3px;
     padding: 0 8px;
+    margin-right: -135px;
   }
   
   .logo {
