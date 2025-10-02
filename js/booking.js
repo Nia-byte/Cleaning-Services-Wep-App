@@ -118,6 +118,15 @@ function isCurrentTabComplete() {
             } else if (selectedService2 === 'post-construction') {
                 return selectedOptions.constructionType !== '';
             } else if (selectedService2 === 'green') {
+                // Must have frequency set
+                if (!selectedOptions.frequency) return false;
+                
+                // If recurring, must also select recurring frequency
+                if (selectedOptions.frequency === 'recurring') {
+                    return selectedOptions.recurringFrequency !== '';
+                }
+                
+                // If once-off, we're complete
                 return true;
             }
             return false;
@@ -317,6 +326,8 @@ function switchTab(tabIndex) {
     if (tabIndex === 1 && selectedService2 === 'green') {
         selectedOptions.beds = 1;
         selectedOptions.baths = 1;
+        selectedOptions.frequency = 'once-off';
+
         // Update the select elements to show correct values
         const greenBedsSelect = document.getElementById('green-beds');
         const greenBathsSelect = document.getElementById('green-baths');
@@ -546,6 +557,8 @@ function initializeOptions() {
         radio.addEventListener('change', () => {
             selectedOptions.recurringFrequency = radio.value;
             updatePrice();
+            updateContinueButton(); 
+            updateAccessibleTabs();
         });
     });
 }
@@ -688,9 +701,21 @@ function updateContinueButton() {
             continueBtn.disabled = !selectedOptions.officeSize;
         } else if (selectedService2 === 'post-construction') {
             continueBtn.disabled = !selectedOptions.constructionType;
+        } else if (selectedService2 === 'green') {
+            // Check if frequency is set
+            if (!selectedOptions.frequency) {
+                continueBtn.disabled = true;
+            } else if (selectedOptions.frequency === 'recurring') {
+                // If recurring, must have recurring frequency selected
+                continueBtn.disabled = !selectedOptions.recurringFrequency;
+            } else {
+                // Once-off is complete
+                continueBtn.disabled = false;
+            }
         } else {
             continueBtn.disabled = false;
         }
+
     } else if (currentTab2 === 2) {
         continueBtn.textContent = 'Continue to Booking Details';
         
@@ -771,7 +796,7 @@ async function submitBooking() {
             additionalInfo: specialInstructions,
             // Service details - THIS WAS MISSING BEFORE
             serviceType: selectedService2,
-            cleaningType: selectedOptions.cleaningType,
+            cleaningType: selectedOptions.cleaningType || 'Green Cleaning',
             beds: selectedOptions.beds,
             baths: selectedOptions.baths,
             frequency: selectedOptions.frequency,
