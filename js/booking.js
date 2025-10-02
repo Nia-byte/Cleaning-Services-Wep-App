@@ -884,7 +884,9 @@ function showSuccessConfirmation(bookingData) {
     
     confirmationTab.innerHTML = `
         <div class="booking-confirmation">
-            <div class="confirmation-icon">✅</div>
+            <div class="confirmation-icon">
+             <img src="https://img.icons8.com/?size=100&id=11695&format=png&color=40C057" alt="Icon description">
+             </div>
             <h2 class="confirmation-title">Booking Confirmed!</h2>
             <p>Thank you for choosing NiaImani Group Cleaning Services</p>
             
@@ -935,10 +937,10 @@ function showSuccessConfirmation(bookingData) {
             
             <div class="note">
                 <h3>What happens next?</h3>
-                <p>📧 <strong>Confirmation email sent</strong> - Check your inbox<br>
-                📞 <strong>We'll call you within 24 hours</strong> to confirm details<br>
-                📋 <strong>Final quote will be provided</strong> after consultation<br>
-                🧽 <strong>Enjoy your sparkling clean space!</strong></p>
+                <p>1. <strong>Confirmation email sent</strong> - Check your inbox<br>
+                2. <strong>We'll call you within 24 hours</strong> to confirm details<br>
+                3. <strong>Final quote will be provided</strong> after consultation<br>
+                4. <strong>Enjoy your sparkling clean space!</strong></p>
             </div>
         </div>
     `;
@@ -997,7 +999,9 @@ function showErrorConfirmation(errorMessage) {
     
     confirmationTab.innerHTML = `
         <div class="booking-confirmation">
-            <div class="confirmation-icon">❌</div>
+            <div class="confirmation-icon">
+              <img src="https://img.icons8.com/?size=100&id=3062&format=png&color=FA5252" alt="Icon description">
+            </div>
             <h2 class="confirmation-title">Booking Failed</h2>
             <div class="error-message">
                 <h3>We're sorry, but there was an error submitting your booking</h3>
