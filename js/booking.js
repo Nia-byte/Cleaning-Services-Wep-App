@@ -810,13 +810,16 @@ async function submitBooking() {
         
 
         // Submit to Netlify function
-        const response = await fetch('/.netlify/functions/send-booking-email', {
+       /* const response = await fetch('/.netlify/functions/send-booking-email', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(bookingData)
-        });
+        }); */
+
+        // Redirect to WhatsApp with booking details
+         openWhatsAppBooking(bookingData);
 
         const result = await response.json();
 
@@ -1183,3 +1186,67 @@ function setDefaultBookingType() {
         personalRadio.checked = true;
     }
 }
+
+
+//WHATSAPP BOOKING
+function openWhatsAppBooking(bookingData) {
+    const phoneNumber = "27670962865"; // WhatsApp number (no +)
+
+    const message = `
+Hello NiaImani Group 👋
+
+I would like to book a cleaning service.
+
+🧹 Service: ${bookingData.serviceType}
+📋 Cleaning Type: ${bookingData.cleaningType}
+🏠 Beds: ${bookingData.beds}
+🚿 Baths: ${bookingData.baths}
+🏢 Office Size: ${bookingData.officeSize || 'N/A'}
+🏗 Construction Type: ${bookingData.constructionType || 'N/A'}
+📐 Square Meters: ${bookingData.squareMeters || 'N/A'}
+
+📅 Date: ${bookingData.date}
+⏰ Time: ${bookingData.time}
+📍 Address: ${bookingData.address}
+
+👤 Name: ${bookingData.name}
+📞 Phone: ${bookingData.phone}
+📧 Email: ${bookingData.email}
+
+💰 Estimated Price: R${bookingData.totalPrice} ZAR
+
+📝 Notes: ${bookingData.additionalInfo || 'None'}
+    `.trim();
+
+    const encodedMessage = encodeURIComponent(message);
+
+    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+    window.open(whatsappURL, "_blank");
+}
+
+
+document.getElementById('book-now-whatsapp').addEventListener('click', () => {
+    const bookingData = {
+        name: document.getElementById('full-name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        date: document.getElementById('preferred-booking-date').value,
+        time: document.getElementById('preferred-time').value,
+        address: document.getElementById('address').value,
+        additionalInfo: document.getElementById('special-instructions')?.value || '',
+        serviceType: selectedService2,
+        cleaningType: selectedOptions.cleaningType,
+        beds: selectedOptions.beds,
+        baths: selectedOptions.baths,
+        frequency: selectedOptions.frequency,
+        recurringFrequency: selectedOptions.recurringFrequency,
+        officeSize: selectedOptions.officeSize,
+        constructionType: selectedOptions.constructionType,
+        squareMeters: selectedOptions.squareMeters,
+        totalPrice: calculatePrice()
+    };
+
+    openWhatsAppBooking(bookingData);
+});
+
