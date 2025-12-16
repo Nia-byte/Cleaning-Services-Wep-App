@@ -339,6 +339,8 @@ function switchTab(tabIndex) {
     
     updateContinueButton();
     updateAccessibleTabs();
+    updateActionButtons();
+
 }
 
 
@@ -745,6 +747,26 @@ function updateContinueButton() {
     } else if (currentTab2 === 3) {
         // Tab 3 is the confirmation tab - hide the button initially
         continueBtn.style.display = 'none';
+    }
+
+    updateActionButtons();
+
+}
+
+function updateActionButtons() {
+    const continueBtn = document.getElementById('continue-btn');
+    const whatsappBtn = document.getElementById('book-now-whatsapp');
+
+    if (!continueBtn || !whatsappBtn) return;
+
+    if (currentTab2 === 2) {
+        // YOUR INFORMATION TAB
+        whatsappBtn.style.display = 'inline-flex'; // show WhatsApp
+        continueBtn.disabled = true;               // disable continue
+    } else {
+        // ALL OTHER TABS
+        whatsappBtn.style.display = 'none';
+        continueBtn.disabled = false;
     }
 }
 

@@ -12,6 +12,11 @@ body {
     overflow-x: hidden;
 }
 
+#book-now-whatsapp {
+    display: none;
+}
+
+
 .main-container {
     display: flex;
     width: 100%;
