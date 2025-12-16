@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Niaimani Group – Terms & Conditions</title>
+    <style>
+        :root {
+            /* Your Brand Colors */
+            --primary-blue: #4285F4;
+            --primary-green: #28A745;
+            --neutral-gray: #8B8B8B;
+            --dark-gray: #2C2C2C;
+            --light-gray: #F8F9FA;
+            --white: #FFFFFF;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --another-blue: #4484f4;
+            --background: #fcfcfc;
+            --blue-hover: #3367D6;
+            --green-accent: #20C997;
+            --section-padding: clamp(2rem, 5vw, 4rem);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--background);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(66, 133, 244, 0.2);
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            background-color: var(--blue-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+        }
+
+        .back-button::before {
+            content: "←";
+            font-size: 1.2em;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 80px 20px 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-top: 20px;
+        }
+
+        .header h1 {
+            color: var(--dark-gray);
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .terms-content {
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: var(--section-padding);
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .term-section {
+            margin-bottom: 35px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .term-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .term-section h2 {
+            color: var(--primary-blue);
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .term-number {
+            background-color: var(--primary-green);
+            color: var(--white);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .term-section p {
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            font-size: 1.05rem;
+        }
+
+        .term-section ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .term-section li {
+            color: var(--text-light);
+            margin-bottom: 8px;
+            padding-left: 5px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid var(--light-gray);
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .last-updated {
+            background-color: var(--light-gray);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 30px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .back-button {
+                top: 15px;
+                left: 15px;
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+
+            .container {
+                padding: 70px 15px 30px;
+            }
+
+            .terms-content {
+                padding: 1.5rem;
+            }
+
+            .term-section h2 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-button">Back to Home</a>
+
+    <div class="container">
+        <div class="header">
+            <h1>Terms & Conditions</h1>
+            <p class="subtitle">Niaimani Group Cleaning Services</p>
+        </div>
+
+        <div class="terms-content">
+            <div class="term-section">
+                <h2><span class="term-number">1</span> Bookings & Deposit</h2>
+                <ul>
+                    <li>A 50% upfront deposit is required to secure all bookings.</li>
+                    <li>Remaining balance is due on the day of service after completion.</li>
+                    <li>Same-day bookings depend on availability.</li>
+                </ul>
+            </div>
+
+            <div class="term-section">
+                <h2><span class="term-number">2</span> Service Scope</h2>
+                <p>Services include the selected cleaning package. Extra tasks (fridge, oven, outside windows, carpet shampoo, laundry, etc.) are billed separately.</p>
+            </div>
+
+            <div class="term-section">
+                <h2><span class="term-number">3</span> Access to Property</h2>
+                <p>Clients must provide safe and timely access. If access is delayed by more than 20 minutes, a call-out fee may apply.</p>
+            </div>
+
+            <div class="term-section">
+                <h2><span class="term-number">4</span> Cancellations & Rescheduling</h2>
+                <ul>
+                    <li>Cancellations under 24 hours may incur a cancellation fee.</li>
+                    <li>The 50% deposit is non-refundable, but can be used once for a rescheduled booking.</li>
+                </ul>
+            </div>
+
+            <div class="term-section">
+                <h2><span class="term-number">5</span> Pricing Adjustments</h2>
+                <p>Quotes are based on information provided. If the job is larger or takes more time than described, the price may be adjusted.</p>
+            </div>
+
+            <div class="term-section">
+                <h2><span class="term-number">6</span> Health & Safety</h2>
+                <p>Our team does not handle hazardous waste, mould, infestations, or any bio-risk materials.</p>
+            </div>
+
+            <div class="term-section">
+                <h2><span class="term-number">7</span> Damages & Liability</h2>
+                <p>Report concerns within 24 hours. Niaimani Group is not liable for:</p>
+                <ul>
+                    <li>Pre-existing damage</li>
+                    <li>Fragile or loose items</li>
+                    <li>Wear-and-tear issues</li>
+                    <li>Discoloration from age or previous products</li>
+                </ul>
+            </div>
+
+            <div class="term-section">
+                <h2><span class="term-number">8</span> Client Responsibilities</h2>
+                <p>Please secure pets, store valuables, and inform us of delicate surfaces (marble, granite, real wood floors, etc.).</p>
+            </div>
+
+            <div class="term-section">
+                <h2><span class="term-number">9</span> Satisfaction Guarantee</h2>
+                <p>If you're unhappy with any area, notify us within 24 hours and we'll return to re-clean at no extra cost.</p>
+            </div>
+
+            <div class="term-section">
+                <h2><span class="term-number">10</span> Confidentiality</h2>
+                <p>All client information and property details are kept private and confidential.</p>
+            </div>
+
+            <div class="last-updated">
+                Last Updated: December 2024
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 Niaimani Group. All rights reserved.</p>
+            <p>For questions about these terms, please contact us.</p>
+        </div>
+    </div>
+</body>
+</html>
