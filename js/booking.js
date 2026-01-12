@@ -1212,7 +1212,7 @@ function setDefaultBookingType() {
 
 //WHATSAPP BOOKING
 function openWhatsAppBooking(bookingData) {
-    const phoneNumber = "27670962865"; // WhatsApp number (no +)
+    const phoneNumber = "27728238385"; // WhatsApp number (no +)
 
     const message = `
 Hello NiaImani Group 👋
