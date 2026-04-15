@@ -4525,3 +4525,79 @@ body.loaded {
     white-space: nowrap;
   }
 }
+
+.booking-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+     z-index: 99999 !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.booking-modal-overlay.active {
+    display: flex;
+}
+
+.booking-modal {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 420px;
+    position: relative;
+    text-align: center;
+}
+
+.booking-modal h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #1a1a2e;
+}
+
+.booking-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #888;
+    line-height: 1;
+}
+
+.booking-options {
+    display: flex;
+    gap: 1rem;
+}
+
+.booking-option {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.5rem 1rem;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #1a1a2e;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.booking-option:hover {
+    border-color: #0a74da;
+    background: #f0f7ff;
+    color: #0a74da;
+}
+
+
+.booking-modal {
+    position: relative;
+    z-index: 100000;
+}
