@@ -9,14 +9,22 @@ function getHeaders() {
   };
 }
 
+function getBlobStore() {
+  return getStore({
+    name: 'car-wash-bookings',
+    siteID: process.env.NETLIFY_SITE_ID,
+    token: process.env.NETLIFY_API_TOKEN
+  });
+}
+
 async function readBookings() {
-  const store = getStore('car-wash-bookings');
+  const store = getBlobStore();
   const data = await store.get('bookings', { type: 'json' }).catch(() => null);
   return Array.isArray(data) ? data : [];
 }
 
 async function writeBookings(bookings) {
-  const store = getStore('car-wash-bookings');
+  const store = getBlobStore();
   await store.setJSON('bookings', bookings);
 }
 
