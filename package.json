@@ -7,7 +7,8 @@
     "build": "echo 'No build step required'"
   },
   "dependencies": {
-    "@sendgrid/mail": "^7.7.0"
+    "@sendgrid/mail": "^7.7.0",
+    "@netlify/blobs": "^8.0.0"
   },
   "keywords": [
     "cleaning",

@@ -1,7 +1,4 @@
-const fs = require('fs/promises');
-const path = require('path');
-
-const BOOKINGS_FILE = path.join(process.cwd(), 'data', 'car-wash-bookings.json');
+const { getStore } = require('@netlify/blobs');
 
 function getHeaders() {
   return {
@@ -13,19 +10,14 @@ function getHeaders() {
 }
 
 async function readBookings() {
-  try {
-    const raw = await fs.readFile(BOOKINGS_FILE, 'utf-8');
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (error) {
-    if (error.code === 'ENOENT') return [];
-    throw error;
-  }
+  const store = getStore('car-wash-bookings');
+  const data = await store.get('bookings', { type: 'json' }).catch(() => null);
+  return Array.isArray(data) ? data : [];
 }
 
 async function writeBookings(bookings) {
-  await fs.mkdir(path.dirname(BOOKINGS_FILE), { recursive: true });
-  await fs.writeFile(BOOKINGS_FILE, JSON.stringify(bookings, null, 2), 'utf-8');
+  const store = getStore('car-wash-bookings');
+  await store.setJSON('bookings', bookings);
 }
 
 async function sendTelegramNotification(booking) {
