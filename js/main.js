@@ -876,37 +876,32 @@
         });
 
         // Booking modal
-document.addEventListener('DOMContentLoaded', () => {
     const bookingModal = document.getElementById('bookingModal');
     const closeBookingModal = document.getElementById('closeBookingModal');
 
-    if (!bookingModal || !closeBookingModal) {
-        console.error('Modal not found in DOM');
-        return;
-    }
+    if (bookingModal && closeBookingModal) {
+        function openModal() {
+            bookingModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
 
-    function openModal() {
-        bookingModal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
+        function closeModal() {
+            bookingModal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
 
-    function closeModal() {
-        bookingModal.style.display = 'none';
-        document.body.style.overflow = '';
-    }
-
-    document.querySelectorAll('a[href="/views/book-a-service.html"]').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            openModal();
+        document.querySelectorAll('a[href="/views/book-a-service.html"]').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                openModal();
+            });
         });
-    });
 
-    closeBookingModal.addEventListener('click', closeModal);
-    bookingModal.addEventListener('click', (e) => {
-        if (e.target === bookingModal) closeModal();
-    });
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeModal();
-    });
-});
+        closeBookingModal.addEventListener('click', closeModal);
+        bookingModal.addEventListener('click', (e) => {
+            if (e.target === bookingModal) closeModal();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    }
