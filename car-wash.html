@@ -1244,7 +1244,8 @@ async function saveBooking(booking) {
 
   if (!response.ok) {
     const result = await response.json().catch(() => ({}));
-    throw new Error(result.error || 'Failed to save booking');
+    console.error('[carwash-bookings] server error:', JSON.stringify(result));
+    throw new Error(result.details || result.error || 'Failed to save booking');
   }
 
   const all = JSON.parse(localStorage.getItem('cwBookings') || '[]');
