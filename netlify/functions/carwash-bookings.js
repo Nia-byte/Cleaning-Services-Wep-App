@@ -9,18 +9,35 @@ function getHeaders() {
   };
 }
 
+const FUNCTION_VERSION = 3;
+
+let credentialMode = 'unset';
+
 function getBlobStore() {
   try {
     // On Netlify, Blobs credentials are injected automatically — no token needed.
-    return getStore('car-wash-bookings');
+    const store = getStore('car-wash-bookings');
+    credentialMode = 'automatic';
+    return store;
   } catch (error) {
     // Fallback for local dev without injected credentials.
+    credentialMode = 'manual-token';
     return getStore({
       name: 'car-wash-bookings',
       siteID: process.env.NETLIFY_SITE_ID,
       token: process.env.NETLIFY_API_TOKEN
     });
   }
+}
+
+function getDiagnostics() {
+  return {
+    version: FUNCTION_VERSION,
+    credentialMode,
+    hasBlobsContext: Boolean(process.env.NETLIFY_BLOBS_CONTEXT),
+    hasSiteId: Boolean(process.env.NETLIFY_SITE_ID),
+    hasApiToken: Boolean(process.env.NETLIFY_API_TOKEN)
+  };
 }
 
 async function readBookings() {
@@ -122,7 +139,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ success: false, error: 'Server error', details: error.message })
+      body: JSON.stringify({ success: false, error: 'Server error', details: error.message, diagnostics: getDiagnostics() })
     };
   }
 };
