@@ -1,4 +1,4 @@
-const { getStore } = require('@netlify/blobs');
+const { getStore, connectLambda } = require('@netlify/blobs');
 
 function getHeaders() {
   return {
@@ -9,9 +9,10 @@ function getHeaders() {
   };
 }
 
-const FUNCTION_VERSION = 3;
+const FUNCTION_VERSION = 4;
 
 let credentialMode = 'unset';
+let hasEventBlobs = false;
 
 function getBlobStore() {
   try {
@@ -34,6 +35,7 @@ function getDiagnostics() {
   return {
     version: FUNCTION_VERSION,
     credentialMode,
+    hasEventBlobs,
     hasBlobsContext: Boolean(process.env.NETLIFY_BLOBS_CONTEXT),
     hasSiteId: Boolean(process.env.NETLIFY_SITE_ID),
     hasApiToken: Boolean(process.env.NETLIFY_API_TOKEN)
@@ -81,6 +83,17 @@ async function sendTelegramNotification(booking) {
 
 exports.handler = async (event) => {
   const headers = getHeaders();
+
+  // Lambda-style functions receive Blobs credentials in the event payload,
+  // not the environment — connectLambda wires them up for getStore().
+  hasEventBlobs = Boolean(event.blobs);
+  if (event.blobs) {
+    try {
+      connectLambda(event);
+    } catch (error) {
+      console.error('connectLambda failed:', error);
+    }
+  }
 
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
