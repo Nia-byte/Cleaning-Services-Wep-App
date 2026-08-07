@@ -10,11 +10,17 @@ function getHeaders() {
 }
 
 function getBlobStore() {
-  return getStore({
-    name: 'car-wash-bookings',
-    siteID: process.env.NETLIFY_SITE_ID,
-    token: process.env.NETLIFY_API_TOKEN
-  });
+  try {
+    // On Netlify, Blobs credentials are injected automatically — no token needed.
+    return getStore('car-wash-bookings');
+  } catch (error) {
+    // Fallback for local dev without injected credentials.
+    return getStore({
+      name: 'car-wash-bookings',
+      siteID: process.env.NETLIFY_SITE_ID,
+      token: process.env.NETLIFY_API_TOKEN
+    });
+  }
 }
 
 async function readBookings() {
